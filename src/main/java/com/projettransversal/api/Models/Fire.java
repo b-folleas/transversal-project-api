@@ -1,11 +1,11 @@
-package com.projettransversal.api.models;
+package com.projettransversal.api.Models;
 
 public class Fire {
     private int id;
     private MapItem MapItem;
     private float intensity;
 
-    public Fire(int id, com.projettransversal.api.models.MapItem mapItem, float intensity) {
+    public Fire(int id, com.projettransversal.api.Models.MapItem mapItem, float intensity) {
         this.id = id;
         MapItem = mapItem;
         this.intensity = intensity;

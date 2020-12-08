@@ -1,16 +1,14 @@
-package com.projettransversal.api.controllers;
+package com.projettransversal.api.Controllers;
 
-import com.projettransversal.api.models.Fire;
-import com.projettransversal.api.models.Ground;
-import com.projettransversal.api.models.MapItem;
-import com.projettransversal.api.models.Truck;
+import com.projettransversal.api.Models.Ground;
+import com.projettransversal.api.Models.MapItem;
+import com.projettransversal.api.Models.Truck;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

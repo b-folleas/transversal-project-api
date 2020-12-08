@@ -1,10 +1,10 @@
-package com.projettransversal.api.models;
+package com.projettransversal.api.Models;
 
 public class Truck {
     private int id;
     private MapItem MapItem;
 
-    public Truck(int id, com.projettransversal.api.models.MapItem mapItem) {
+    public Truck(int id, com.projettransversal.api.Models.MapItem mapItem) {
         this.id = id;
         MapItem = mapItem;
     }
@@ -17,11 +17,11 @@ public class Truck {
         this.id = id;
     }
 
-    public com.projettransversal.api.models.MapItem getMapItem() {
+    public com.projettransversal.api.Models.MapItem getMapItem() {
         return MapItem;
     }
 
-    public void setMapItem(com.projettransversal.api.models.MapItem mapItem) {
+    public void setMapItem(com.projettransversal.api.Models.MapItem mapItem) {
         MapItem = mapItem;
     }
 }

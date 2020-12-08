@@ -1,10 +1,7 @@
-package com.projettransversal.api.controllers;
+package com.projettransversal.api.Controllers;
 
-import com.projettransversal.api.IServices.IFireService;
-import com.projettransversal.api.Services.FireService;
-import com.projettransversal.api.models.Fire;
-import com.projettransversal.api.models.Ground;
-import com.projettransversal.api.models.MapItem;
+import com.projettransversal.api.Services.IServices.IFireService;
+import com.projettransversal.api.Models.Fire;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;

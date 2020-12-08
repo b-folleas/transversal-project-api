@@ -1,6 +1,6 @@
-package com.projettransversal.api.DAO;
+package com.projettransversal.api.DAL.DAO;
 
-import com.projettransversal.api.models.Fire;
+import com.projettransversal.api.Models.Fire;
 
 import java.util.List;
 import java.util.Optional;

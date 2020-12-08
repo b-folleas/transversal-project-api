@@ -1,4 +1,4 @@
-package com.projettransversal.api.models;
+package com.projettransversal.api.Models;
 
 public class MapItem {
     private int posX;

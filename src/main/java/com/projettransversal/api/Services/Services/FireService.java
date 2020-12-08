@@ -1,9 +1,8 @@
-package com.projettransversal.api.Services;
+package com.projettransversal.api.Services.Services;
 
-import com.projettransversal.api.IRepositories.IFireRepository;
-import com.projettransversal.api.IServices.IFireService;
-import com.projettransversal.api.Repositories.FireRepository;
-import com.projettransversal.api.models.Fire;
+import com.projettransversal.api.DAL.Interfaces.IFireRepository;
+import com.projettransversal.api.Services.IServices.IFireService;
+import com.projettransversal.api.Models.Fire;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,11 +1,9 @@
-package com.projettransversal.api.Repositories;
+package com.projettransversal.api.DAL.Repositories;
 
-import com.projettransversal.api.DAO.FireDAO;
-import com.projettransversal.api.DAO.IFireDAO;
-import com.projettransversal.api.IRepositories.IFireRepository;
-import com.projettransversal.api.models.Fire;
-import com.projettransversal.api.models.Ground;
-import com.projettransversal.api.models.MapItem;
+import com.projettransversal.api.DAL.Interfaces.IFireRepository;
+import com.projettransversal.api.Models.Fire;
+import com.projettransversal.api.Models.Ground;
+import com.projettransversal.api.Models.MapItem;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
