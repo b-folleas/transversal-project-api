@@ -4,7 +4,7 @@ plugins {
     id 'java'
 }
 
-group = 'apiproject'
+group = 'com.projettransversal'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -13,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'com.fasterxml.jackson.core:jackson-core'
 }
 
 test {
