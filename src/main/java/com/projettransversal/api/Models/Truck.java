@@ -11,15 +11,14 @@ public class Truck {
     @Column(name = "id")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "mapItemId", referencedColumnName = "id")
+    @OneToOne()
+    @JoinColumn(name = "map_item_id", referencedColumnName = "id")
     private MapItem mapItem;
 
     public Truck() {
     }
 
-    public Truck(int id, MapItem mapItem) {
-        this.id = id;
+    public Truck(MapItem mapItem) {
         this.mapItem = mapItem;
     }
 

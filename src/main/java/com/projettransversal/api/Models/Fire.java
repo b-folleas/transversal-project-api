@@ -12,15 +12,14 @@ public class Fire {
     @Column(name = "id")
     private int id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "mapItemId", referencedColumnName = "id")
+    @OneToOne()
+    @JoinColumn(name = "map_item_id", referencedColumnName = "id")
     private MapItem mapItem;
 
     @Column(name = "intensity")
     private float intensity;
 
-    public Fire(int id, MapItem mapItem, float intensity) {
-        this.id = id;
+    public Fire(MapItem mapItem, float intensity) {
         this.mapItem = mapItem;
         this.intensity = intensity;
     }
