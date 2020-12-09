@@ -41,21 +41,24 @@ public class Seeder implements CommandLineRunner {
     private void loadMapItem(List<MapItem> data) {
         if (_mapItemRepository.count() == 0) {
             _mapItemRepository.saveAll(data);
+
+            System.out.println(_mapItemRepository.count() + " mapItems inserted");
         }
-        System.out.println(_mapItemRepository.count());
     }
 
     private void loadFires(List<Fire> data) {
         if (_fireRepository.count() == 0) {
             _fireRepository.saveAll(data);
+
+            System.out.println(_fireRepository.count() + " fires inserted");
         }
-        System.out.println(_fireRepository.count());
     }
 
     private void loadTrucks(List<Truck> data) {
         if (_truckRepository.count() == 0) {
             _truckRepository.saveAll(data);
+
+            System.out.println(_truckRepository.count() + " trucks inserted");
         }
-        System.out.println(_truckRepository.count());
     }
 }

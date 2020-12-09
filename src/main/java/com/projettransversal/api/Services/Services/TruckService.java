@@ -1,13 +1,8 @@
 package com.projettransversal.api.Services.Services;
 
-import com.projettransversal.api.DAL.Interfaces.ITruckRepository;
 import com.projettransversal.api.DAL.Repositories.TruckRepository;
-import com.projettransversal.api.Models.Fire;
 import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Services.IServices.ITruckService;
-import com.projettransversal.api.Services.IServices.ITruckService;
-import com.sun.xml.bind.v2.model.core.ID;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +21,6 @@ public class TruckService implements ITruckService {
     }
 
     public Optional<Truck> findById(int id) {
-        Optional<Truck> a = _truckRepository.findById(id);
-        return a;
+        return _truckRepository.findById(id);
     }
 }
