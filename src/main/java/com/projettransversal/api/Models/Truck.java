@@ -1,12 +1,26 @@
 package com.projettransversal.api.Models;
 
-public class Truck {
-    private int id;
-    private MapItem MapItem;
+import javax.persistence.*;
 
-    public Truck(int id, com.projettransversal.api.Models.MapItem mapItem) {
+@Entity
+@Table(name = "Truck", schema = "public")
+public class Truck {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private int id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "mapItemId", referencedColumnName = "id")
+    private MapItem mapItem;
+
+    public Truck() {
+    }
+
+    public Truck(int id, MapItem mapItem) {
         this.id = id;
-        MapItem = mapItem;
+        this.mapItem = mapItem;
     }
 
     public int getId() {
@@ -17,11 +31,11 @@ public class Truck {
         this.id = id;
     }
 
-    public com.projettransversal.api.Models.MapItem getMapItem() {
-        return MapItem;
+    public MapItem getMapItem() {
+        return this.mapItem;
     }
 
-    public void setMapItem(com.projettransversal.api.Models.MapItem mapItem) {
-        MapItem = mapItem;
+    public void setMapItem(MapItem mapItem) {
+        this.mapItem = mapItem;
     }
 }

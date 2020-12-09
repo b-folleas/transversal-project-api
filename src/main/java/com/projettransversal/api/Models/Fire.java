@@ -1,14 +1,31 @@
 package com.projettransversal.api.Models;
 
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "Fire", schema = "public")
 public class Fire {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
-    private MapItem MapItem;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "mapItemId", referencedColumnName = "id")
+    private MapItem mapItem;
+
+    @Column(name = "intensity")
     private float intensity;
 
-    public Fire(int id, com.projettransversal.api.Models.MapItem mapItem, float intensity) {
+    public Fire(int id, MapItem mapItem, float intensity) {
         this.id = id;
-        MapItem = mapItem;
+        this.mapItem = mapItem;
         this.intensity = intensity;
+    }
+
+    public Fire() {
     }
 
     public int getId() {
@@ -28,10 +45,10 @@ public class Fire {
     }
 
     public MapItem getMapItem() {
-        return MapItem;
+        return mapItem;
     }
 
     public void setMapItem(MapItem mapItem) {
-        MapItem = mapItem;
+        this.mapItem = mapItem;
     }
 }

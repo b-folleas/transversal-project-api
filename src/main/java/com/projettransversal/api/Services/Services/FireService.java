@@ -1,6 +1,8 @@
 package com.projettransversal.api.Services.Services;
 
 import com.projettransversal.api.DAL.Interfaces.IFireRepository;
+import com.projettransversal.api.DAL.Repositories.FireRepository;
+import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Services.IServices.IFireService;
 import com.projettransversal.api.Models.Fire;
 import org.springframework.stereotype.Service;
@@ -10,14 +12,14 @@ import java.util.Optional;
 
 @Service
 public class FireService implements IFireService {
-    private final IFireRepository _fireRepository;
+    private final FireRepository _fireRepository;
 
-    public FireService(IFireRepository fireRepository) {
+    public FireService(FireRepository fireRepository) {
         _fireRepository = fireRepository;
     }
 
     public List<Fire> findAll() {
-        return _fireRepository.findAll();
+        return (List<Fire>) _fireRepository.findAll();
     }
 
     public Optional<Fire> findById(int id) {

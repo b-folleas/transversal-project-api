@@ -1,8 +1,11 @@
 package com.projettransversal.api.Controllers;
 
+import com.projettransversal.api.Models.Fire;
 import com.projettransversal.api.Models.Ground;
 import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Models.Truck;
+import com.projettransversal.api.Services.IServices.IFireService;
+import com.projettransversal.api.Services.IServices.ITruckService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,16 +18,20 @@ import java.util.Optional;
 @RestController
 public class TruckController {
 
-    @RequestMapping(value="/trucks/{id}", method= RequestMethod.GET)
-    public Optional<Truck> getTruckById(@PathVariable int id) {
-        List<Truck> trucks =  new ArrayList<Truck>();
-        trucks.add(new Truck(0, new MapItem(5,5, Ground.ROAD)));
-        trucks.add(new Truck(1, new MapItem(5,5, Ground.ROAD)));
-        trucks.add(new Truck(2, new MapItem(5,5, Ground.ROAD)));
+    private final ITruckService _truckService;
 
-        return trucks.stream()
-                .filter(e -> e.getId() == id)
-                .findFirst();
+    public TruckController(ITruckService truckService) {
+        _truckService = truckService;
+    }
+
+    @RequestMapping(value="/trucks", method= RequestMethod.GET)
+    public List<Truck> getTrucks() {
+        return _truckService.findAll();
+    }
+
+    @RequestMapping(value="/truck/{id}", method= RequestMethod.GET)
+    public Optional<Truck> getTruckById(@PathVariable int id) {
+        return _truckService.findById(id);
     }
 
 }
