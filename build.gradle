@@ -25,6 +25,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'com.fasterxml.jackson.core:jackson-core'
     implementation 'org.postgresql:postgresql'
+    implementation 'com.fazecast:jSerialComm:[2.0.0,3.0.0)'
 }
 
 test {
