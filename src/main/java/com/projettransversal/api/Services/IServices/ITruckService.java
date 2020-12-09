@@ -1,6 +1,5 @@
 package com.projettransversal.api.Services.IServices;
 
-import com.projettransversal.api.Models.Fire;
 import com.projettransversal.api.Models.Truck;
 
 import java.util.List;

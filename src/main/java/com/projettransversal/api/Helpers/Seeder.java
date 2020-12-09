@@ -1,9 +1,11 @@
 package com.projettransversal.api.Helpers;
 
-import com.projettransversal.api.DAL.Repositories.FireRepository;
-import com.projettransversal.api.DAL.Repositories.MapItemRepository;
-import com.projettransversal.api.DAL.Repositories.TruckRepository;
-import com.projettransversal.api.Models.Fire;
+import com.projettransversal.api.Repositories.BarrackRepository;
+import com.projettransversal.api.Repositories.IncidentRepository;
+import com.projettransversal.api.Repositories.MapItemRepository;
+import com.projettransversal.api.Repositories.TruckRepository;
+import com.projettransversal.api.Models.Barrack;
+import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Models.Truck;
 import org.springframework.boot.CommandLineRunner;
@@ -16,26 +18,26 @@ public class Seeder implements CommandLineRunner {
 
     MapItemRepository _mapItemRepository;
     TruckRepository _truckRepository;
-    FireRepository _fireRepository;
+    IncidentRepository _incidentRepository;
+    BarrackRepository _barrackRepository;
 
     public Seeder(MapItemRepository mapItemRepository,
                   TruckRepository truckRepository,
-                  FireRepository fireRepository) {
+                  IncidentRepository incidentRepository,
+                  BarrackRepository barrackRepository) {
         this._mapItemRepository = mapItemRepository;
         this._truckRepository = truckRepository;
-        this._fireRepository = fireRepository;
+        this._incidentRepository = incidentRepository;
+        this._barrackRepository = barrackRepository;
     }
 
     @Override
     public void run(String... args) {
         DataTest data = new DataTest();
-        try {
-            loadMapItem(data.mapItems);
-            loadFires(data.fires);
-            loadTrucks(data.trucks);
-        }
-        catch (Exception ignored) {
-        }
+        loadMapItem(data.mapItems);
+        loadIncidents(data.incidents);
+        loadBarracks(data.barracks);
+        loadTrucks(data.trucks);
     }
 
     private void loadMapItem(List<MapItem> data) {
@@ -46,11 +48,19 @@ public class Seeder implements CommandLineRunner {
         }
     }
 
-    private void loadFires(List<Fire> data) {
-        if (_fireRepository.count() == 0) {
-            _fireRepository.saveAll(data);
+    private void loadIncidents(List<Incident> data) {
+        if (_incidentRepository.count() == 0) {
+            _incidentRepository.saveAll(data);
 
-            System.out.println(_fireRepository.count() + " fires inserted");
+            System.out.println(_incidentRepository.count() + " incidents inserted");
+        }
+    }
+
+    private void loadBarracks(List<Barrack> data) {
+        if (_barrackRepository.count() == 0) {
+            _barrackRepository.saveAll(data);
+
+            System.out.println(_barrackRepository.count() + " barracks inserted");
         }
     }
 

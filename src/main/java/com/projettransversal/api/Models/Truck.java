@@ -15,11 +15,20 @@ public class Truck {
     @JoinColumn(name = "map_item_id", referencedColumnName = "id")
     private MapItem mapItem;
 
+    @OneToOne()
+    @JoinColumn(name = "barrack_id", referencedColumnName = "id")
+    private Barrack barrack;
+
+    @Column(name = "availability")
+    private boolean availability;
+
     public Truck() {
     }
 
-    public Truck(MapItem mapItem) {
+    public Truck(MapItem mapItem, boolean availability, Barrack barrack) {
         this.mapItem = mapItem;
+        this.availability = availability;
+        this.barrack = barrack;
     }
 
     public int getId() {

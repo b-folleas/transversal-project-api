@@ -1,4 +1,4 @@
-package com.projettransversal.api.DAL.Repositories;
+package com.projettransversal.api.Repositories;
 
 import com.projettransversal.api.Models.Truck;
 import org.springframework.data.repository.CrudRepository;

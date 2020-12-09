@@ -1,14 +1,13 @@
 package com.projettransversal.api.Models;
 
-public enum Ground {
-    ROAD("ROAD"),
-    GARDEN("ROAD"),
-    BUILDING("BUILDING"),
-    WATER("WATER");
+public enum IncidentType {
+    FLOOD("FLOOD"),
+    FIRE("FIRE"),
+    ACCIDENT("ACCIDENT");
 
     private final String text;
 
-    Ground(final String text) {
+    IncidentType(final String text) {
         this.text = text;
     }
 
