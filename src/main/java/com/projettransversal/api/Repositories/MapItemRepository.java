@@ -1,12 +1,13 @@
 package com.projettransversal.api.Repositories;
 
 import com.projettransversal.api.Models.MapItem;
-import com.projettransversal.api.Models.Truck;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MapItemRepository extends CrudRepository<MapItem, Integer> {
 
+    @Query(value = "select * from map_item where posx = ?1 and posy = ?2", nativeQuery = true)
+    MapItem findByCoordinates(int x, int y);
 }

@@ -7,7 +7,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MapItemService extends CrudService<MapItem> implements IMapItemService {
+
+    private MapItemRepository _mapItemRepository;
+
     public MapItemService(MapItemRepository mapItemRepository) {
         super(mapItemRepository);
+        _mapItemRepository = mapItemRepository;
+    }
+
+    public MapItem findByCoordinates(int x, int y) {
+        return _mapItemRepository.findByCoordinates(x, y);
     }
 }

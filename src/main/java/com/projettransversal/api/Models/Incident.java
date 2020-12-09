@@ -32,6 +32,14 @@ public class Incident {
     public Incident() {
     }
 
+    public IncidentType getIncidentType() {
+        return incidentType;
+    }
+
+    public void setIncidentType(IncidentType incidentType) {
+        this.incidentType = incidentType;
+    }
+
     public int getId() {
         return id;
     }

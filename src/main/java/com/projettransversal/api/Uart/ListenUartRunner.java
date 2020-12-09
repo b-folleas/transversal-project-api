@@ -1,6 +1,9 @@
 package com.projettransversal.api.Uart;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.projettransversal.api.Models.Incident;
+import com.projettransversal.api.Models.IncidentType;
+import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Services.Services.IncidentService;
 import com.projettransversal.api.Services.Services.MapItemService;
 import org.springframework.boot.CommandLineRunner;
@@ -71,14 +74,28 @@ public class ListenUartRunner implements CommandLineRunner {
     public void insert(String type, List<Integer> positions){
         System.out.println(type + " " + positions.get(0) + " " + positions.get(1) + " " + positions.get(2));
 
-        /*_mapItemService.
+        MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
+        if (mapItem == null) { return; }
+
         Incident incident = new Incident();
+        incident.setMapItem(mapItem);
+        incident.setIntensity(positions.get(2));
 
         switch(type) {
             case "F":
-                _incidentService.insertOrUpdate(null);
+                incident.setIncidentType(IncidentType.FIRE);
+                break;
+            case "I":
+                incident.setIncidentType(IncidentType.FLOOD);
+                break;
+            case "A":
+                incident.setIncidentType(IncidentType.ACCIDENT);
+                break;
+            case "T":
+                incident.setIncidentType(IncidentType.TORNADO);
                 break;
         }
-        _incidentService.insertOrUpdate(null);*/
+
+        _incidentService.insertOrUpdate(incident);
     }
 }

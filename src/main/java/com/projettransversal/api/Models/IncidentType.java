@@ -3,7 +3,8 @@ package com.projettransversal.api.Models;
 public enum IncidentType {
     FLOOD("FLOOD"),
     FIRE("FIRE"),
-    ACCIDENT("ACCIDENT");
+    ACCIDENT("ACCIDENT"),
+    TORNADO("TORNADO");
 
     private final String text;
 
