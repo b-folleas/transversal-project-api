@@ -18,13 +18,13 @@ public class IncidentController {
         _incidentService = incidentService;
     }
 
-    @RequestMapping(value="/fires", method= RequestMethod.GET)
-    public List<Incident> getFires() {
+    @RequestMapping(value="/incidents", method= RequestMethod.GET)
+    public List<Incident> getIncidents() {
         return _incidentService.findAll();
     }
 
-    @RequestMapping(value="/fire/{id}", method= RequestMethod.GET)
-    public Optional<Incident> getFireById(@PathVariable int id) {
+    @RequestMapping(value="/incident/{id}", method= RequestMethod.GET)
+    public Optional<Incident> getIncidentById(@PathVariable int id) {
         return _incidentService.findById(id);
     }
 }
