@@ -28,8 +28,11 @@ public class ListenUartRunner implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        SerialPort comPort = SerialPort.getCommPorts()[0];
+        SerialPort comPort = SerialPort.getCommPort("COM2");
+        comPort.setComPortParameters(9600,8,1,0);
+        comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
         comPort.openPort();
+        System.out.println("Listen on : " + comPort.getSystemPortName());
         try {
             while (true)
             {
@@ -41,14 +44,12 @@ public class ListenUartRunner implements CommandLineRunner {
                 comPort.readBytes(readBuffer, readBuffer.length);
 
                 String data = new String(readBuffer, StandardCharsets.UTF_8);
-                System.out.println(data);
-
-                // F/1,1,1/2,2,2/3,3,3&I/4,4,4/6,6,6
 
                 data = data.replaceAll(" ", "");
                 data = data.replaceAll("\"", "");
                 data = data.replaceAll("'", "");
-                data = data.replaceAll("(?:\\n|\\r)", ""); ;
+                data = data.replaceAll("(?:\\n|\\r)", "");
+                System.out.println("Received by UART on port " + comPort.getSystemPortName() + " : " + data);
 
                 String[] incidentsTypes = data.split("&");
                 for (String incidentsType : incidentsTypes) {
@@ -67,15 +68,17 @@ public class ListenUartRunner implements CommandLineRunner {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            comPort.closePort();
         }
-        comPort.closePort();
     }
 
     public void insert(String type, List<Integer> positions){
-        System.out.println(type + " " + positions.get(0) + " " + positions.get(1) + " " + positions.get(2));
-
         MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
-        if (mapItem == null) { return; }
+        if (mapItem == null) {
+            System.out.println("No mapItem found for these coordinates. Return");
+            return;
+        }
 
         Incident incident = new Incident();
         incident.setMapItem(mapItem);
@@ -96,6 +99,12 @@ public class ListenUartRunner implements CommandLineRunner {
                 break;
         }
 
-        _incidentService.insertOrUpdate(incident);
+        List<Incident> similarIncidents = _incidentService.findByData(incident);
+        if (similarIncidents.size() == 0) {
+            _incidentService.insertOrUpdate(incident);
+            System.out.println("Incident inserted");
+        } else {
+            System.out.println("Incident already present ! Not inserted");
+        }
     }
 }

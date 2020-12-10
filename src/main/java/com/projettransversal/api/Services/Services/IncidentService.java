@@ -5,9 +5,19 @@ import com.projettransversal.api.Repositories.IncidentRepository;
 import com.projettransversal.api.Services.IServices.IIncidentService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
+    private final IncidentRepository _incidentRepository;
+
     public IncidentService(IncidentRepository incidentRepository) {
         super(incidentRepository);
+        _incidentRepository = incidentRepository;
+    }
+
+    public List<Incident> findByData(Incident incident) {
+        return List.copyOf(_incidentRepository
+            .findByData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId()));
     }
 }

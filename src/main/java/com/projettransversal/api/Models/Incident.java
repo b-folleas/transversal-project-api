@@ -4,7 +4,7 @@ package com.projettransversal.api.Models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Incident", schema = "public")
+@Table(name = "incident", schema = "public")
 public class Incident {
 
     @Id
