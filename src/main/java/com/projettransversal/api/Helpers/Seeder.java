@@ -38,7 +38,6 @@ public class Seeder implements CommandLineRunner {
         loadTrucks(data.trucks);
     }
 
-
     private void loadIncidents(List<Incident> data) {
         if (_incidentRepository.count() == 0) {
             _incidentRepository.saveAll(data);
