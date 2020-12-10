@@ -1,29 +1,18 @@
 package com.projettransversal.api.Helpers;
 
-import com.projettransversal.api.Models.*;
+import com.projettransversal.api.Models.Barrack;
+import com.projettransversal.api.Models.Incident;
+import com.projettransversal.api.Models.Truck;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataTest {
-    public List<MapItem> mapItems;
     public List<Incident> incidents;
     public List<Barrack> barracks;
     public List<Truck> trucks;
 
     public DataTest() {
-        mapItems = new ArrayList<MapItem>() {
-            {
-                add(new MapItem(1,1, Ground.BUILDING));
-                add(new MapItem(9,1, Ground.ROAD));
-                add(new MapItem(5,4, Ground.GARDEN));
-                add(new MapItem(6,1, Ground.BUILDING));
-                add(new MapItem(9,7, Ground.ROAD));
-                add(new MapItem(5,3, Ground.GARDEN));
-            }
-        };
-
-        incidents = new ArrayList<Incident>() {
+        /*incidents = new ArrayList<Incident>() {
             {
                 add(new Incident(mapItems.get(0), 5, IncidentType.FIRE));
                 add(new Incident(mapItems.get(1),  9, IncidentType.FIRE));
@@ -54,6 +43,6 @@ public class DataTest {
                 add(new Truck(mapItems.get(4), true, barracks.get(4)));
                 add(new Truck(mapItems.get(5), true, barracks.get(5)));
             }
-        };
+        };*/
     }
 }
