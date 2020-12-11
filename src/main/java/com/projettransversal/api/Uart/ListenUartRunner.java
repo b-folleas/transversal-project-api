@@ -28,12 +28,13 @@ public class ListenUartRunner implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        SerialPort comPort = SerialPort.getCommPort("COM2");
-        comPort.setComPortParameters(9600,8,1,0);
-        comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
-        comPort.openPort();
-        System.out.println("Listen on : " + comPort.getSystemPortName());
         try {
+            SerialPort comPort = SerialPort.getCommPort("COM2");
+            comPort.setComPortParameters(9600,8,1,0);
+            comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
+            comPort.openPort();
+            System.out.println("Listen on : " + comPort.getSystemPortName());
+
             while (true)
             {
                 while (comPort.bytesAvailable() == 0) {
@@ -68,8 +69,7 @@ public class ListenUartRunner implements CommandLineRunner {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            comPort.closePort();
+            System.out.println("Error in getting COM connexion");
         }
     }
 

@@ -15,12 +15,13 @@ public class WriteUartService {
 
     @Async
     public void write(List<Incident> incidents) {
-        SerialPort comPort = SerialPort.getCommPort("COM3");
-        comPort.setComPortParameters(9600,8,1,0);
-        comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
-        comPort.openPort();
-        System.out.println("Opening port to write : " + comPort.getSystemPortName());
         try {
+            SerialPort comPort = SerialPort.getCommPort("COM3");
+            comPort.setComPortParameters(9600,8,1,0);
+            comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
+            comPort.openPort();
+            System.out.println("Opening port to write : " + comPort.getSystemPortName());
+
             String formattedData = formatData(incidents);
             System.out.println(formattedData);
             byte[] buffer = formattedData.getBytes(StandardCharsets.UTF_8);
@@ -29,10 +30,9 @@ public class WriteUartService {
             } else {
                 System.out.println("Data sent by port " + comPort.getSystemPortName());
             }
+            comPort.closePort();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            comPort.closePort();
         }
     }
 

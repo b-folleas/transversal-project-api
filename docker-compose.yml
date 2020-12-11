@@ -1,0 +1,26 @@
+version: '3'
+services:
+  manager-api:
+    build: .
+    image: manager-api
+    container_name: manager-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://manager_database:5432/manager_database
+    ports:
+      - "8080:8080"
+    restart: always
+    #devices:
+    #  - "/dev/ttyUSB0:/dev/ttyUSB0"
+    depends_on:
+      - manager_database
+
+  manager_database:
+    image: postgres
+    container_name: manager_database
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=manager_database
+    restart: always
