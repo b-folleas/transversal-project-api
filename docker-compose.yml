@@ -9,8 +9,8 @@ services:
     ports:
       - "8080:8080"
     restart: always
-    #devices:
-    #  - "/dev/ttyUSB0:/dev/ttyUSB0"
+    devices:
+      - "/dev/ttyACM0:dev/ttyACM0"
     depends_on:
       - manager_database
 

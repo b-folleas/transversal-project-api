@@ -16,8 +16,8 @@ public class WriteUartService {
     @Async
     public void write(List<Incident> incidents) {
         try {
-            SerialPort comPort = SerialPort.getCommPort("COM3");
-            comPort.setComPortParameters(9600,8,1,0);
+            SerialPort comPort = SerialPort.getCommPort("/dev/ttyACM0");
+            comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();
             System.out.println("Opening port to write : " + comPort.getSystemPortName());
