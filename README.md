@@ -2,4 +2,4 @@
 gradlew.bat build
 
 -- CREER IMAGE DOCKER
-docker compose up --build
+docker-compose up --build

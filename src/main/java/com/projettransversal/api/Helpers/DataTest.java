@@ -17,7 +17,7 @@ public class DataTest {
         incidents = new ArrayList<Incident>() {
             {
                 add(new Incident(mapItems.get(0), 5, IncidentType.FIRE));
-                add(new Incident(mapItems.get(1),  9, IncidentType.FIRE));
+                add(new Incident(mapItems.get(1), 9, IncidentType.FIRE));
                 add(new Incident(mapItems.get(2), 7, IncidentType.FIRE));
                 add(new Incident(mapItems.get(3), 1, IncidentType.FIRE));
                 add(new Incident(mapItems.get(4), 2, IncidentType.FIRE));
