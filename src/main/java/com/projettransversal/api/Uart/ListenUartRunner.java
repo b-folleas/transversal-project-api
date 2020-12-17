@@ -33,8 +33,7 @@ public class ListenUartRunner implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        System.out.println("Send data to MQTT : ");
-        _mqttService.publish("my super long eloi");
+        _mqttService.sendToBroker("mes feux");
         /*try {
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);

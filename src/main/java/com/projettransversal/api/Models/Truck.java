@@ -22,13 +22,17 @@ public class Truck {
     @Column(name = "availability")
     private boolean availability;
 
+    @Column(name = "matricule")
+    private int matricule;
+
     public Truck() {
     }
 
-    public Truck(MapItem mapItem, boolean availability, Barrack barrack) {
+    public Truck(MapItem mapItem, boolean availability, Barrack barrack, int matricule) {
         this.mapItem = mapItem;
-        this.availability = availability;
         this.barrack = barrack;
+        this.availability = availability;
+        this.matricule = matricule;
     }
 
     public int getId() {
@@ -40,10 +44,34 @@ public class Truck {
     }
 
     public MapItem getMapItem() {
-        return this.mapItem;
+        return mapItem;
     }
 
     public void setMapItem(MapItem mapItem) {
         this.mapItem = mapItem;
+    }
+
+    public Barrack getBarrack() {
+        return barrack;
+    }
+
+    public void setBarrack(Barrack barrack) {
+        this.barrack = barrack;
+    }
+
+    public boolean isAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(boolean availability) {
+        this.availability = availability;
+    }
+
+    public int getMatricule() {
+        return matricule;
+    }
+
+    public void setMatricule(int matricule) {
+        this.matricule = matricule;
     }
 }

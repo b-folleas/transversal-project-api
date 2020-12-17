@@ -11,9 +11,14 @@ public class MQTTService {
     public MQTTService() {
     }
 
-    public void publish(String payload) throws MqttPersistenceException, MqttException {
-        MqttMessage mqttMessage = new MqttMessage();
-        mqttMessage.setPayload(payload.getBytes());
-        MQTTBuilder.getInstance().publish("content", mqttMessage);
+    public void sendToBroker(String payload) throws MqttPersistenceException, MqttException {
+        try {
+            MqttMessage mqttMessage = new MqttMessage();
+            mqttMessage.setPayload(payload.getBytes());
+            MQTTBuilder.getInstance().publish("content", mqttMessage);
+            System.out.println("Data send to brocker successfully");
+        } catch (MqttException d) {
+            System.out.println("Error in sending data to brocker");
+        }
     }
 }
