@@ -3,6 +3,7 @@ package com.projettransversal.api.Uart;
 import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,13 @@ import java.util.stream.Collectors;
 @Service
 public class WriteUartService {
 
+    @Value("${uart.comm.port}")
+    String uartPort;
+
     @Async
     public void write(List<Incident> incidents) {
         try {
-            SerialPort comPort = SerialPort.getCommPort("/dev/ttyACM0");
+            SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();

@@ -5,6 +5,7 @@ import com.projettransversal.api.Models.IncidentType;
 import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Services.Services.IncidentService;
 import com.projettransversal.api.Services.Services.MapItemService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Component
 public class ListenUartRunner implements CommandLineRunner {
+
+    @Value("${uart.comm.port}")
+    String uartPort;
 
     private IncidentService _incidentService;
     private MapItemService _mapItemService;
@@ -27,7 +31,7 @@ public class ListenUartRunner implements CommandLineRunner {
     @Async
     public void run(String... args) throws Exception {
         /*try {
-            SerialPort comPort = SerialPort.getCommPort("/dev/ttyACM0");
+            SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();
