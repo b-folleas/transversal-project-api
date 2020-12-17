@@ -1,26 +1,26 @@
 version: '3'
 services:
-  manager-api:
+  simulator-api:
     build: .
-    image: manager-api
-    container_name: manager-api
+    image: simulator-api
+    container_name: simulator-api
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://manager_database:5432/manager_database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://simulator_database:5432/simulator_database
     ports:
-      - "8080:8080"
+      - "8081:8080"
     restart: always
     devices:
       - "/dev/ttyACM0:dev/ttyACM0"
     depends_on:
-      - manager_database
+      - simulator_database
 
-  manager_database:
+  simulator_database:
     image: postgres
-    container_name: manager_database
+    container_name: simulator_database
     ports:
-      - "5432:5432"
+      - "5431:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=manager_database
+      - POSTGRES_DB=simulator_database
     restart: always
