@@ -1,5 +1,6 @@
 package com.projettransversal.api.Uart;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
@@ -11,6 +12,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -34,7 +37,7 @@ public class ListenUartRunner implements CommandLineRunner {
     @Async
     public void run(String... args) throws Exception {
         _mqttService.sendToBroker("mes feux");
-        /*try {
+        try {
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
@@ -51,6 +54,7 @@ public class ListenUartRunner implements CommandLineRunner {
                 comPort.readBytes(readBuffer, readBuffer.length);
 
                 String data = new String(readBuffer, StandardCharsets.UTF_8);
+                List<Incident> incidentsToAdd = new ArrayList<Incident>();
 
                 data = data.replaceAll(" ", "");
                 data = data.replaceAll("\"", "");
@@ -60,30 +64,40 @@ public class ListenUartRunner implements CommandLineRunner {
 
                 String[] incidentsTypes = data.split("&");
                 for (String incidentsType : incidentsTypes) {
-                    String[] incidents = incidentsType.split("/");
+                    String[] incidentsList = incidentsType.split("/");
 
-                    for (int i = 1; i < incidents.length ; i++ ) {
+                    for (int i = 1; i < incidentsList.length ; i++ ) {
                         List<Integer> positionsList = new ArrayList<Integer>();
 
-                        for (String position : incidents[i].split(",")) {
+                        for (String position : incidentsList[i].split(",")) {
                             positionsList.add(Integer.parseInt(position));
                         }
 
-                        insert(incidents[0], positionsList);
+                        incidentsToAdd.add(mapToIncident(incidentsList[0], positionsList));
                     }
                 }
+
+                for (Incident incident : incidentsToAdd) {
+                    List<Incident> similarIncidents = _incidentService.findByData(incident);
+                    if (similarIncidents.size() != 0) {
+                        System.out.println("Incident already present ! Not inserted");
+                        incidentsToAdd.remove(incident);
+                    }
+                }
+
+                _incidentService.insertOrUpdateMultiple(incidentsToAdd);
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error in getting COM connexion");
-        }*/
+        }
     }
 
-    public void insert(String type, List<Integer> positions){
+    public Incident mapToIncident(String type, List<Integer> positions){
         MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
         if (mapItem == null) {
             System.out.println("No mapItem found for these coordinates. Return");
-            return;
+            return null;
         }
 
         Incident incident = new Incident();
@@ -105,12 +119,6 @@ public class ListenUartRunner implements CommandLineRunner {
                 break;
         }
 
-        List<Incident> similarIncidents = _incidentService.findByData(incident);
-        if (similarIncidents.size() == 0) {
-            _incidentService.insertOrUpdate(incident);
-            System.out.println("Incident inserted");
-        } else {
-            System.out.println("Incident already present ! Not inserted");
-        }
+        return incident;
     }
 }

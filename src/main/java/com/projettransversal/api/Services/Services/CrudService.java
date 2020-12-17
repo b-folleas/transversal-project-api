@@ -25,6 +25,10 @@ public abstract class CrudService<T> implements ICrudService<T> {
         return _repository.save(obj);
     }
 
+    public Iterable<T> insertOrUpdateMultiple(List<T> obj) {
+        return _repository.saveAll(obj);
+    }
+
     public void delete(T obj) {
         _repository.delete(obj);
     }
