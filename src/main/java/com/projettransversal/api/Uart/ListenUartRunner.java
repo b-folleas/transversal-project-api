@@ -1,5 +1,6 @@
 package com.projettransversal.api.Uart;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
 import com.projettransversal.api.Models.MapItem;
@@ -10,6 +11,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -30,7 +33,7 @@ public class ListenUartRunner implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        /*try {
+        try {
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
@@ -72,7 +75,7 @@ public class ListenUartRunner implements CommandLineRunner {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error in getting COM connexion");
-        }*/
+        }
     }
 
     public void insert(String type, List<Integer> positions){

@@ -7,7 +7,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://manager_database:5432/manager_database
     ports:
-      - "8080:8080"
+      - "8082:8080"
     restart: always
     devices:
       - "/dev/ttyACM0:dev/ttyACM0"
