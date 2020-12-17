@@ -5,7 +5,7 @@ services:
     image: simulator-api
     container_name: simulator-api
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://simulator_database:5432/simulator_database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://simulator_database:5431/simulator_database
     ports:
       - "8081:8080"
     restart: always
