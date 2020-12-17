@@ -10,7 +10,7 @@ services:
       - "8082:8082"
     restart: always
     devices:
-      - "/dev/ttyACM0:dev/ttyACM0"
+      - "/dev/ttyACM1:dev/ttyACM1"
     depends_on:
       - manager_database
 

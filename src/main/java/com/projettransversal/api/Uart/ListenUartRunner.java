@@ -42,6 +42,7 @@ public class ListenUartRunner implements CommandLineRunner {
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();
+            StringBuilder msg = new StringBuilder();
             System.out.println("Listen on : " + comPort.getSystemPortName());
 
             while (true)
@@ -54,13 +55,20 @@ public class ListenUartRunner implements CommandLineRunner {
                 comPort.readBytes(readBuffer, readBuffer.length);
 
                 String data = new String(readBuffer, StandardCharsets.UTF_8);
-                List<Incident> incidentsToAdd = new ArrayList<Incident>();
+                List<Incident> incidents = new ArrayList<Incident>();
 
                 data = data.replaceAll(" ", "");
                 data = data.replaceAll("\"", "");
                 data = data.replaceAll("'", "");
                 data = data.replaceAll("(?:\\n|\\r)", "");
                 System.out.println("Received by UART on port " + comPort.getSystemPortName() + " : " + data);
+                msg.append(data);
+
+                if (msg.charAt(msg.length() - 1) != '$') {
+                    continue;
+                }
+
+                System.out.println("Complete message received : " + msg.toString());
 
                 String[] incidentsTypes = data.split("&");
                 for (String incidentsType : incidentsTypes) {
@@ -73,15 +81,17 @@ public class ListenUartRunner implements CommandLineRunner {
                             positionsList.add(Integer.parseInt(position));
                         }
 
-                        incidentsToAdd.add(mapToIncident(incidentsList[0], positionsList));
+                        incidents.add(mapToIncident(incidentsList[0], positionsList));
                     }
                 }
 
-                for (Incident incident : incidentsToAdd) {
+                List<Incident> incidentsToAdd = new ArrayList<Incident>();
+                for (Incident incident : incidents) {
                     List<Incident> similarIncidents = _incidentService.findByData(incident);
-                    if (similarIncidents.size() != 0) {
+                    if (similarIncidents.size() == 0) {
+                        incidentsToAdd.add(incident);
+                    } else {
                         System.out.println("Incident already present ! Not inserted");
-                        incidentsToAdd.remove(incident);
                     }
                 }
 
