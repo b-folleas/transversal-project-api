@@ -1,5 +1,6 @@
 package com.projettransversal.api.Uart;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.Models.Incident;
@@ -36,7 +37,6 @@ public class ListenUartRunner implements CommandLineRunner {
     @Override
     @Async
     public void run(String... args) throws Exception {
-        _mqttService.sendToBroker("mes feux");
         try {
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
@@ -45,6 +45,7 @@ public class ListenUartRunner implements CommandLineRunner {
             StringBuilder msg = new StringBuilder();
             System.out.println("Listen on : " + comPort.getSystemPortName());
 
+            // F/1,1,1/2,2,2/3,3,3&I/4,4,4/6,6,6
             while (true)
             {
                 while (comPort.bytesAvailable() == 0) {
@@ -61,16 +62,23 @@ public class ListenUartRunner implements CommandLineRunner {
                 data = data.replaceAll("\"", "");
                 data = data.replaceAll("'", "");
                 data = data.replaceAll("(?:\\n|\\r)", "");
-                System.out.println("Received by UART on port " + comPort.getSystemPortName() + " : " + data);
                 msg.append(data);
+                System.out.println("Received by UART on port " +
+                        comPort.getSystemPortName() + " : " + data +
+                        ", current message is : " + msg.toString());
 
+                // message not complete
                 if (msg.charAt(msg.length() - 1) != '$') {
                     continue;
                 }
 
+                // remove $
+                msg = new StringBuilder(msg.substring(0, msg.length() - 1));
+
                 System.out.println("Complete message received : " + msg.toString());
 
-                String[] incidentsTypes = data.split("&");
+                String[] incidentsTypes = msg.toString().split("&");
+                msg = new StringBuilder();
                 for (String incidentsType : incidentsTypes) {
                     String[] incidentsList = incidentsType.split("/");
 
@@ -96,9 +104,11 @@ public class ListenUartRunner implements CommandLineRunner {
                 }
 
                 _incidentService.insertOrUpdateMultiple(incidentsToAdd);
+                System.out.println(incidentsToAdd.size() + " incidents inserted");
+                System.out.println(new ObjectMapper().writeValueAsString(incidentsToAdd));
+                // _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
             }
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("Error in getting COM connexion");
         }
     }

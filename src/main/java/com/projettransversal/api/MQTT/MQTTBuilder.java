@@ -49,7 +49,7 @@ public class MQTTBuilder {
                 instance.connect(options);
             }
         } catch (MqttException e) {
-            e.printStackTrace();
+            System.out.println("Error in getting MQTT instance with address " + brockerAddressStatic );
         }
 
         return instance;
