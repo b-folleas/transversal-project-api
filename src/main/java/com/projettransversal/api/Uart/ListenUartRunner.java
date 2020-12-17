@@ -48,65 +48,69 @@ public class ListenUartRunner implements CommandLineRunner {
             // F/1,1,1/2,2,2/3,3,3&I/4,4,4/6,6,6
             while (true)
             {
-                while (comPort.bytesAvailable() == 0) {
-                    Thread.sleep(20);
-                }
-
-                byte[] readBuffer = new byte[comPort.bytesAvailable()];
-                comPort.readBytes(readBuffer, readBuffer.length);
-
-                String data = new String(readBuffer, StandardCharsets.UTF_8);
-                List<Incident> incidents = new ArrayList<Incident>();
-
-                data = data.replaceAll(" ", "");
-                data = data.replaceAll("\"", "");
-                data = data.replaceAll("'", "");
-                data = data.replaceAll("(?:\\n|\\r)", "");
-                msg.append(data);
-                System.out.println("Received by UART on port " +
-                        comPort.getSystemPortName() + " : " + data +
-                        ", current message is : " + msg.toString());
-
-                // message not complete
-                if (msg.charAt(msg.length() - 1) != '$') {
-                    continue;
-                }
-
-                // remove $
-                msg = new StringBuilder(msg.substring(0, msg.length() - 1));
-
-                System.out.println("Complete message received : " + msg.toString());
-
-                String[] incidentsTypes = msg.toString().split("&");
-                msg = new StringBuilder();
-                for (String incidentsType : incidentsTypes) {
-                    String[] incidentsList = incidentsType.split("/");
-
-                    for (int i = 1; i < incidentsList.length ; i++ ) {
-                        List<Integer> positionsList = new ArrayList<Integer>();
-
-                        for (String position : incidentsList[i].split(",")) {
-                            positionsList.add(Integer.parseInt(position));
+                try {
+                    while (comPort.bytesAvailable() == 0) {
+                        Thread.sleep(20);
+                    }
+    
+                    byte[] readBuffer = new byte[comPort.bytesAvailable()];
+                    comPort.readBytes(readBuffer, readBuffer.length);
+    
+                    String data = new String(readBuffer, StandardCharsets.UTF_8);
+                    List<Incident> incidents = new ArrayList<Incident>();
+    
+                    data = data.replaceAll(" ", "");
+                    data = data.replaceAll("\"", "");
+                    data = data.replaceAll("'", "");
+                    data = data.replaceAll("(?:\\n|\\r)", "");
+                    msg.append(data);
+                    System.out.println("Received by UART on port " +
+                            comPort.getSystemPortName() + " : " + data +
+                            ", current message is : " + msg.toString());
+    
+                    // message not complete
+                    if (msg.charAt(msg.length() - 1) != '$') {
+                        continue;
+                    }
+    
+                    // remove $
+                    msg = new StringBuilder(msg.substring(0, msg.length() - 1));
+    
+                    System.out.println("Complete message received : " + msg.toString());
+    
+                    String[] incidentsTypes = msg.toString().split("&");
+                    msg = new StringBuilder();
+                    for (String incidentsType : incidentsTypes) {
+                        String[] incidentsList = incidentsType.split("/");
+    
+                        for (int i = 1; i < incidentsList.length ; i++ ) {
+                            List<Integer> positionsList = new ArrayList<Integer>();
+    
+                            for (String position : incidentsList[i].split(",")) {
+                                positionsList.add(Integer.parseInt(position));
+                            }
+    
+                            incidents.add(mapToIncident(incidentsList[0], positionsList));
                         }
-
-                        incidents.add(mapToIncident(incidentsList[0], positionsList));
                     }
-                }
-
-                List<Incident> incidentsToAdd = new ArrayList<Incident>();
-                for (Incident incident : incidents) {
-                    List<Incident> similarIncidents = _incidentService.findByData(incident);
-                    if (similarIncidents.size() == 0) {
-                        incidentsToAdd.add(incident);
-                    } else {
-                        System.out.println("Incident already present ! Not inserted");
+    
+                    List<Incident> incidentsToAdd = new ArrayList<Incident>();
+                    for (Incident incident : incidents) {
+                        List<Incident> similarIncidents = _incidentService.findByData(incident);
+                        if (similarIncidents.size() == 0) {
+                            incidentsToAdd.add(incident);
+                        } else {
+                            System.out.println("Incident already present ! Not inserted");
+                        }
                     }
+    
+                    _incidentService.insertOrUpdateMultiple(incidentsToAdd);
+                    System.out.println(incidentsToAdd.size() + " incidents inserted");
+                    System.out.println(new ObjectMapper().writeValueAsString(incidentsToAdd));
+                    _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
+                } catch (Exception e) {
+                    System.out.println("Error in recieving packet");
                 }
-
-                _incidentService.insertOrUpdateMultiple(incidentsToAdd);
-                System.out.println(incidentsToAdd.size() + " incidents inserted");
-                System.out.println(new ObjectMapper().writeValueAsString(incidentsToAdd));
-                _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
             }
         } catch (Exception e) {
             System.out.println("Error in getting COM connexion");
