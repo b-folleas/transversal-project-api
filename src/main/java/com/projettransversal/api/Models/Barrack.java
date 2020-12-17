@@ -11,6 +11,9 @@ public class Barrack {
     @Column(name = "id")
     private int id;
 
+    @Column(name = "name")
+    private String name;
+
     @OneToOne()
     @JoinColumn(name = "map_item_id", referencedColumnName = "id")
     private MapItem mapItem;
@@ -18,7 +21,8 @@ public class Barrack {
     public Barrack() {
     }
 
-    public Barrack(MapItem mapItem) {
+    public Barrack(String name, MapItem mapItem) {
+        this.name = name;
         this.mapItem = mapItem;
     }
 
@@ -30,8 +34,16 @@ public class Barrack {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public MapItem getMapItem() {
-        return this.mapItem;
+        return mapItem;
     }
 
     public void setMapItem(MapItem mapItem) {

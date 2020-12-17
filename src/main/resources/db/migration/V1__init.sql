@@ -30,6 +30,7 @@ DROP TABLE IF EXISTS barrack;
 CREATE TABLE public.barrack
 (
     id integer NOT NULL,
+    name character varying(255),
     map_item_id integer,
     CONSTRAINT pk_barrack PRIMARY KEY (id),
     CONSTRAINT fk_map_item_id FOREIGN KEY (map_item_id)
@@ -42,6 +43,7 @@ DROP TABLE IF EXISTS truck;
 CREATE TABLE public.truck
 (
     id integer NOT NULL,
+    matricule integer NOT NULL,
     availability boolean DEFAULT true,
     map_item_id integer,
     barrack_id integer,
@@ -55,3 +57,28 @@ CREATE TABLE public.truck
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
+
+DROP TABLE IF EXISTS incident_truck;
+CREATE TABLE public.incident_truck
+(
+    id integer NOT NULL,
+    incident_id integer NOT NULL,
+    truck_id integer NOT NULL,
+    CONSTRAINT pk_incident_truck PRIMARY KEY (id),
+    CONSTRAINT fk_incident_id FOREIGN KEY (incident_id)
+        REFERENCES public.incident (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_truck_id FOREIGN KEY (truck_id)
+        REFERENCES public.truck (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+
+CREATE INDEX ON "incident" ("map_item_id");
+CREATE INDEX ON "truck" ("barrack_id");
+CREATE INDEX ON "truck" ("map_item_id");
+CREATE INDEX ON "barrack" ("map_item_id");
+CREATE UNIQUE INDEX ON "incident_truck" ("truck_id", "incident_id");
+CREATE INDEX ON "incident_truck" ("incident_id");
+CREATE INDEX ON "incident_truck" ("truck_id");

@@ -27,23 +27,23 @@ public class DataTest {
 
         barracks = new ArrayList<Barrack>() {
             {
-                add(new Barrack(mapItems.get(6)));
-                add(new Barrack(mapItems.get(7)));
-                add(new Barrack(mapItems.get(8)));
-                add(new Barrack(mapItems.get(9)));
-                add(new Barrack(mapItems.get(10)));
-                add(new Barrack(mapItems.get(11)));
+                add(new Barrack("one", mapItems.get(6)));
+                add(new Barrack("two", mapItems.get(7)));
+                add(new Barrack("three", mapItems.get(8)));
+                add(new Barrack("four", mapItems.get(9)));
+                add(new Barrack("five", mapItems.get(10)));
+                add(new Barrack("six", mapItems.get(11)));
             }
         };
 
         trucks = new ArrayList<Truck>() {
             {
-                add(new Truck(mapItems.get(12), true, barracks.get(0)));
-                add(new Truck(mapItems.get(13), true, barracks.get(1)));
-                add(new Truck(mapItems.get(14), true, barracks.get(2)));
-                add(new Truck(mapItems.get(15), true, barracks.get(3)));
-                add(new Truck(mapItems.get(16), true, barracks.get(4)));
-                add(new Truck(mapItems.get(17), true, barracks.get(5)));
+                add(new Truck(mapItems.get(12), true, barracks.get(0), 1));
+                add(new Truck(mapItems.get(13), true, barracks.get(1), 2));
+                add(new Truck(mapItems.get(14), true, barracks.get(2), 3));
+                add(new Truck(mapItems.get(15), true, barracks.get(3), 4));
+                add(new Truck(mapItems.get(16), true, barracks.get(4), 5));
+                add(new Truck(mapItems.get(17), true, barracks.get(5), 6));
             }
         };
     }
