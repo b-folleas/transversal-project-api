@@ -69,14 +69,15 @@ public class ListenUartRunner implements CommandLineRunner {
                             ", current message is : " + msg.toString());
     
                     String content = msg.toString();
+                    StringBuilder msgFull;
 
                     // Si jamais le message contient 1 $
-                    if(content.contains('$')) {
-                        fullContent = content.split('$')[0];
+                    if(content.contains("@")) {
+                        String fullContent = content.split("@")[0];
                         msgFull = new StringBuilder(fullContent);
 
                         // Si jamais il y avait du contenu après le $ on le stock a nouveau dans msg
-                        msg = (content.split('$').size() > 1) ? new StringBuilder(content.split('$')[1]) : new StringBuilder();
+                        msg = (content.split("@").length > 1) ? new StringBuilder(content.split("@")[1]) : new StringBuilder();
                     } else {
                         continue;
                     }
