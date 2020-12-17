@@ -36,7 +36,7 @@ public class WriteUartService {
             }
             comPort.closePort();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error in getting connexion with port " + comPort.getSystemPortName());
         }
     }
 
