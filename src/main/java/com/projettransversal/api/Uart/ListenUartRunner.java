@@ -68,18 +68,22 @@ public class ListenUartRunner implements CommandLineRunner {
                             comPort.getSystemPortName() + " : " + data +
                             ", current message is : " + msg.toString());
     
-                    // message not complete
-                    if (msg.charAt(msg.length() - 1) != '$') {
+                    content = msg.toString();
+
+                    // Si jamais le message contient 1 $
+                    if(content.contains('$')) {
+                        fullContent = content.split('$')[0];
+                        msgFull = new StringBuilder(fullContent);
+
+                        // Si jamais il y avait du contenu après le $ on le stock a nouveau dans msg
+                        msg = (content.split('$').size() > 1) ? new StringBuilder(content.split('$')[1]) : new StringBuilder();
+                    } else {
                         continue;
                     }
     
-                    // remove $
-                    msg = new StringBuilder(msg.substring(0, msg.length() - 1));
+                    System.out.println("Complete message received : " + msgFull.toString());
     
-                    System.out.println("Complete message received : " + msg.toString());
-    
-                    String[] incidentsTypes = msg.toString().split("&");
-                    msg = new StringBuilder();
+                    String[] incidentsTypes = msgFull.toString().split("&");
                     for (String incidentsType : incidentsTypes) {
                         String[] incidentsList = incidentsType.split("/");
     
