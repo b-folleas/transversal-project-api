@@ -24,10 +24,4 @@ public class IncidentController {
     public Optional<Incident> getIncidentById(@PathVariable int id) {
         return _incidentService.findById(id);
     }
-
-    @RequestMapping(value="/incident", method= RequestMethod.POST)
-    public Incident getIncidentById(@RequestBody Incident incident) {
-        _incidentService.insertOrUpdate(incident);
-        return incident;
-    }
 }

@@ -2,7 +2,6 @@ package com.projettransversal.api.MQTT;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,7 +10,7 @@ public class MQTTService {
     public MQTTService() {
     }
 
-    public void sendToBroker(String payload) throws MqttPersistenceException, MqttException {
+    public void sendToBroker(String payload) {
         try {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setPayload(payload.getBytes());

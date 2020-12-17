@@ -106,7 +106,7 @@ public class ListenUartRunner implements CommandLineRunner {
                 _incidentService.insertOrUpdateMultiple(incidentsToAdd);
                 System.out.println(incidentsToAdd.size() + " incidents inserted");
                 System.out.println(new ObjectMapper().writeValueAsString(incidentsToAdd));
-                // _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
+                _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
             }
         } catch (Exception e) {
             System.out.println("Error in getting COM connexion");
