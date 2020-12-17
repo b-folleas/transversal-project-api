@@ -1,6 +1,6 @@
 package com.projettransversal.api.Uart;
 
-import com.fazecast.jSerialComm.SerialPort;
+import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
 import com.projettransversal.api.Models.MapItem;
@@ -11,8 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -23,17 +21,21 @@ public class ListenUartRunner implements CommandLineRunner {
 
     private IncidentService _incidentService;
     private MapItemService _mapItemService;
+    private MQTTService _mqttService;
 
-    public ListenUartRunner(IncidentService incidentService, MapItemService mapItemService) {
+    public ListenUartRunner(IncidentService incidentService, MapItemService mapItemService, MQTTService mqttService) {
         _incidentService = incidentService;
         _mapItemService = mapItemService;
+        _mqttService = mqttService;
     }
 
 
     @Override
     @Async
     public void run(String... args) throws Exception {
-        try {
+        System.out.println("Send data to MQTT : ");
+        _mqttService.publish("my super long eloi");
+        /*try {
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
@@ -75,7 +77,7 @@ public class ListenUartRunner implements CommandLineRunner {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error in getting COM connexion");
-        }
+        }*/
     }
 
     public void insert(String type, List<Integer> positions){
