@@ -68,7 +68,7 @@ public class ListenUartRunner implements CommandLineRunner {
                             comPort.getSystemPortName() + " : " + data +
                             ", current message is : " + msg.toString());
     
-                    content = msg.toString();
+                    String content = msg.toString();
 
                     // Si jamais le message contient 1 $
                     if(content.contains('$')) {
