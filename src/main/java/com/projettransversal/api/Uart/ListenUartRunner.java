@@ -45,7 +45,7 @@ public class ListenUartRunner implements CommandLineRunner {
             StringBuilder msg = new StringBuilder();
             System.out.println("Listen on : " + comPort.getSystemPortName());
 
-            // F/1,1,1/2,2,2/3,3,3&I/4,4,4/6,6,6
+            // F/1,1,1/2,2,2/3,3,3&I/4,4,4/6,6,6@
             while (true)
             {
                 try {
@@ -115,6 +115,7 @@ public class ListenUartRunner implements CommandLineRunner {
                     _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
                 } catch (Exception e) {
                     System.out.println("Error in recieving packet");
+                    msg = new StringBuilder();
                 }
             }
         } catch (Exception e) {

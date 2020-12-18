@@ -4,8 +4,9 @@ services:
     build: .
     image: manager-api
     container_name: manager-api
+    network_mode: host
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://manager_database:5432/manager_database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/manager_database
     ports:
       - "8082:8082"
     restart: always
@@ -17,6 +18,9 @@ services:
   manager_database:
     image: postgres
     container_name: manager_database
+    network_mode: host
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
