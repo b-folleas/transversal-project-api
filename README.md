@@ -1,5 +1,5 @@
 # Transversal project API 
-## Get started 
+## Pour commencer
 
 -- BUILD LE PROJET
 gradlew.bat build
@@ -7,10 +7,12 @@ gradlew.bat build
 -- CREER IMAGE DOCKER
 docker-compose up --build
 
-## How to use :
+## Comment l'utiliser
 
-Example post data using curl HTTP request :
+Requête POST example pour le simulateur (branche simulateur)
 
 curl --header "Content-Type: application/json" -d '{"id":62,"mapItem":{"id":1,"posX":1,"posY":1,"ground":"BUILDING"},"intensity":1.0,"incidentType":"FIRE"}' -X POST http://localhost:8080/incident
 
-For now the serial communication is in the "/dev/ttyACM1" for linux 
+## Ports serial 
+- manager : /dev/ttyACM1
+- simulator : /dev/ttyACM0
