@@ -1,4 +1,4 @@
-package com.projettransversal.api.Helpers;
+package com.projettransversal.api.Seeder;
 
 import com.projettransversal.api.Models.*;
 import com.projettransversal.api.Repositories.MapItemRepository;

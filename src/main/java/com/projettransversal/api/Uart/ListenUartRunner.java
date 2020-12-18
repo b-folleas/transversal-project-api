@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.Models.Incident;
-import com.projettransversal.api.Models.IncidentType;
-import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Services.Services.IncidentService;
 import com.projettransversal.api.Services.Services.MapItemService;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +12,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -38,6 +35,8 @@ public class ListenUartRunner implements CommandLineRunner {
     @Async
     public void run(String... args) throws Exception {
         try {
+            UartHelper uartHelper = new UartHelper(_mapItemService, _incidentService);
+
             SerialPort comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
@@ -55,64 +54,35 @@ public class ListenUartRunner implements CommandLineRunner {
     
                     byte[] readBuffer = new byte[comPort.bytesAvailable()];
                     comPort.readBytes(readBuffer, readBuffer.length);
-    
                     String data = new String(readBuffer, StandardCharsets.UTF_8);
-                    List<Incident> incidents = new ArrayList<Incident>();
-    
-                    data = data.replaceAll(" ", "");
-                    data = data.replaceAll("\"", "");
-                    data = data.replaceAll("'", "");
-                    data = data.replaceAll("(?:\\n|\\r)", "");
+                    data = uartHelper.sanitizeMessage(data);
                     msg.append(data);
+
                     System.out.println("Received by UART on port " +
                             comPort.getSystemPortName() + " : " + data +
                             ", current message is : " + msg.toString());
     
-                    String content = msg.toString();
                     StringBuilder msgFull;
-
-                    // Si jamais le message contient 1 $
-                    if(content.contains("@")) {
-                        String fullContent = content.split("@")[0];
-                        msgFull = new StringBuilder(fullContent);
-
-                        // Si jamais il y avait du contenu après le $ on le stock a nouveau dans msg
-                        msg = (content.split("@").length > 1) ? new StringBuilder(content.split("@")[1]) : new StringBuilder();
+                    String msgContent = msg.toString();
+                    if(msgContent.contains("@")) {
+                        msgFull = new StringBuilder(msgContent.split("@")[0]);
+                        msg = (msgContent.split("@").length > 1) ?
+                                new StringBuilder(msgContent.split("@")[1]) :
+                                new StringBuilder();
                     } else {
                         continue;
                     }
     
                     System.out.println("Complete message received : " + msgFull.toString());
-    
-                    String[] incidentsTypes = msgFull.toString().split("&");
-                    for (String incidentsType : incidentsTypes) {
-                        String[] incidentsList = incidentsType.split("/");
-    
-                        for (int i = 1; i < incidentsList.length ; i++ ) {
-                            List<Integer> positionsList = new ArrayList<Integer>();
-    
-                            for (String position : incidentsList[i].split(",")) {
-                                positionsList.add(Integer.parseInt(position));
-                            }
-    
-                            incidents.add(mapToIncident(incidentsList[0], positionsList));
-                        }
-                    }
-    
-                    List<Incident> incidentsToAdd = new ArrayList<Incident>();
-                    for (Incident incident : incidents) {
-                        List<Incident> similarIncidents = _incidentService.findByData(incident);
-                        if (similarIncidents.size() == 0) {
-                            incidentsToAdd.add(incident);
-                        } else {
-                            System.out.println("Incident already present ! Not inserted");
-                        }
-                    }
-    
+
+                    List<Incident> incidents = uartHelper.mapMessageToIncidents(msgFull.toString());
+                    List<Incident> incidentsToAdd = uartHelper.keepNewIncidents(incidents);
+
                     _incidentService.insertOrUpdateMultiple(incidentsToAdd);
                     System.out.println(incidentsToAdd.size() + " incidents inserted");
-                    System.out.println(new ObjectMapper().writeValueAsString(incidentsToAdd));
+
                     _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
+                    System.out.println(incidentsToAdd.size() + " incidents send by MQTT");
                 } catch (Exception e) {
                     System.out.println("Error in recieving packet");
                     msg = new StringBuilder();
@@ -121,34 +91,5 @@ public class ListenUartRunner implements CommandLineRunner {
         } catch (Exception e) {
             System.out.println("Error in getting COM connexion");
         }
-    }
-
-    public Incident mapToIncident(String type, List<Integer> positions){
-        MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
-        if (mapItem == null) {
-            System.out.println("No mapItem found for these coordinates. Return");
-            return null;
-        }
-
-        Incident incident = new Incident();
-        incident.setMapItem(mapItem);
-        incident.setIntensity(positions.get(2));
-
-        switch(type) {
-            case "F":
-                incident.setIncidentType(IncidentType.FIRE);
-                break;
-            case "I":
-                incident.setIncidentType(IncidentType.FLOOD);
-                break;
-            case "A":
-                incident.setIncidentType(IncidentType.ACCIDENT);
-                break;
-            case "T":
-                incident.setIncidentType(IncidentType.TORNADO);
-                break;
-        }
-
-        return incident;
     }
 }

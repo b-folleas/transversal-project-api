@@ -1,4 +1,4 @@
-package com.projettransversal.api.Helpers;
+package com.projettransversal.api.Seeder;
 
 import com.projettransversal.api.Models.Barrack;
 import com.projettransversal.api.Models.Incident;

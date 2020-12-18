@@ -15,7 +15,6 @@ public class MQTTService {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setPayload(payload.getBytes());
             MQTTBuilder.getInstance().publish("content", mqttMessage);
-            System.out.println("Data send to brocker successfully");
         } catch (MqttException d) {
             System.out.println("Error in sending data to brocker");
         }
