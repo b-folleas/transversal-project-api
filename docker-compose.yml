@@ -1,20 +1,5 @@
 version: '3'
 services:
-  manager-api:
-    build: .
-    image: manager-api
-    container_name: manager-api
-    network_mode: host
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/manager_database
-    ports:
-      - "8082:8082"
-    restart: always
-    devices:
-      - "/dev/ttyACM1:dev/ttyACM1"
-    depends_on:
-      - manager_database
-
   manager_database:
     image: postgres
     container_name: manager_database
@@ -26,3 +11,16 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=manager_database
     restart: always
+
+  manager-api:
+    build: .
+    image: manager-api
+    container_name: manager-api
+    network_mode: host
+    ports:
+      - "8082:8082"
+    restart: always
+    devices:
+      - "/dev/ttyACM1:dev/ttyACM1"
+
+  
