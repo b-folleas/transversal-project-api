@@ -19,8 +19,9 @@ public class WriteUartService {
 
     @Async
     public void write(List<Incident> incidents) {
+        SerialPort comPort = null;
         try {
-            SerialPort comPort = SerialPort.getCommPort(uartPort);
+            comPort = SerialPort.getCommPort(uartPort);
             comPort.setComPortParameters(115200,8,1,0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();
