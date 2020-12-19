@@ -7,6 +7,8 @@ import com.projettransversal.api.Repositories.BarrackRepository;
 import com.projettransversal.api.Repositories.IncidentRepository;
 import com.projettransversal.api.Repositories.MapItemRepository;
 import com.projettransversal.api.Repositories.TruckRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +17,12 @@ import java.util.List;
 @Component
 public class Seeder implements CommandLineRunner {
 
-    MapItemRepository _mapItemRepository;
-    TruckRepository _truckRepository;
-    IncidentRepository _incidentRepository;
-    BarrackRepository _barrackRepository;
+    private final Logger logger = LoggerFactory.getLogger(Seeder.class);
+
+    private final MapItemRepository _mapItemRepository;
+    private final TruckRepository _truckRepository;
+    private final IncidentRepository _incidentRepository;
+    private final BarrackRepository _barrackRepository;
 
     public Seeder(MapItemRepository mapItemRepository,
                   TruckRepository truckRepository,
@@ -41,24 +45,21 @@ public class Seeder implements CommandLineRunner {
     private void loadIncidents(List<Incident> data) {
         if (_incidentRepository.count() == 0) {
             _incidentRepository.saveAll(data);
-
-            System.out.println(_incidentRepository.count() + " incidents inserted");
+            logger.info(_incidentRepository.count() + " incidents inserted");
         }
     }
 
     private void loadBarracks(List<Barrack> data) {
         if (_barrackRepository.count() == 0) {
             _barrackRepository.saveAll(data);
-
-            System.out.println(_barrackRepository.count() + " barracks inserted");
+            logger.info(_barrackRepository.count() + " barracks inserted");
         }
     }
 
     private void loadTrucks(List<Truck> data) {
         if (_truckRepository.count() == 0) {
             _truckRepository.saveAll(data);
-
-            System.out.println(_truckRepository.count() + " trucks inserted");
+            logger.info(_truckRepository.count() + " trucks inserted");
         }
     }
 }

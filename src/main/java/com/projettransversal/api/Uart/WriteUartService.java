@@ -3,6 +3,8 @@ package com.projettransversal.api.Uart;
 import com.fazecast.jSerialComm.SerialPort;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class WriteUartService {
 
+    private final Logger logger = LoggerFactory.getLogger(WriteUartService.class);
+
     @Value("${uart.comm.port}")
     String uartPort;
 
@@ -22,22 +26,22 @@ public class WriteUartService {
         SerialPort comPort = null;
         try {
             comPort = SerialPort.getCommPort(uartPort);
-            comPort.setComPortParameters(115200,8,1,0);
+            comPort.setComPortParameters(115200, 8, 1, 0);
             comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING,0,0);
             comPort.openPort();
-            System.out.println("Opening port to write : " + comPort.getSystemPortName());
+            logger.info("Opening port to write : " + comPort.getSystemPortName());
 
             String formattedData = formatData(incidents);
-            System.out.println(formattedData);
+            logger.info(formattedData);
             byte[] buffer = formattedData.getBytes(StandardCharsets.UTF_8);
             if(comPort.writeBytes(buffer, buffer.length) == -1) {
-                System.out.println("Error in sending UART to port " + comPort.getSystemPortName());
+                logger.info("Error in sending UART to port " + comPort.getSystemPortName());
             } else {
-                System.out.println("Data sent by port " + comPort.getSystemPortName());
+                logger.info("Data sent by port " + comPort.getSystemPortName());
             }
             comPort.closePort();
         } catch (Exception e) {
-            System.out.println("Error in getting connexion with port " + comPort.getSystemPortName());
+            logger.info("Error in getting connexion with port " + comPort.getSystemPortName());
         }
     }
 
