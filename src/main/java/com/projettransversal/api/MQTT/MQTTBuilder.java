@@ -4,11 +4,15 @@ import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MQTTBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(MQTTBuilder.class);
 
     @Value("${mqtt.client.id}")
     private String clientId;
@@ -49,7 +53,7 @@ public class MQTTBuilder {
                 instance.connect(options);
             }
         } catch (MqttException e) {
-            System.out.println("Error in getting MQTT instance with address " + brockerAddressStatic );
+            logger.error("Error in getting MQTT instance with address " + brockerAddressStatic);
         }
 
         return instance;

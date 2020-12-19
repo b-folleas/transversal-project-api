@@ -5,11 +5,15 @@ import com.projettransversal.api.Models.IncidentType;
 import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Services.Services.IncidentService;
 import com.projettransversal.api.Services.Services.MapItemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UartHelper {
+
+    private final Logger logger = LoggerFactory.getLogger(UartHelper.class);
 
     private final IncidentService _incidentService;
     private final MapItemService _mapItemService;
@@ -56,7 +60,7 @@ public class UartHelper {
             if (similarIncidents.size() == 0) {
                 incidentsToAdd.add(incident);
             } else {
-                System.out.println("Incident already present ! Not inserted");
+                logger.info("Incident already present ! Not inserted");
             }
         }
 
@@ -66,7 +70,7 @@ public class UartHelper {
     public Incident buildIncident(String type, List<Integer> positions){
         MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
         if (mapItem == null) {
-            System.out.println("No mapItem found for these coordinates. Return");
+            logger.info("No mapItem found for these coordinates. Return");
             return null;
         }
 
