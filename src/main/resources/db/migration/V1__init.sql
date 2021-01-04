@@ -61,10 +61,9 @@ CREATE TABLE public.truck
 DROP TABLE IF EXISTS incident_truck;
 CREATE TABLE public.incident_truck
 (
-    id integer NOT NULL,
     incident_id integer NOT NULL,
-    truck_id integer NOT NULL,
-    CONSTRAINT pk_incident_truck PRIMARY KEY (id),
+    truck_id    integer NOT NULL,
+    CONSTRAINT pk_incident_truck PRIMARY KEY (incident_id, truck_id),
     CONSTRAINT fk_incident_id FOREIGN KEY (incident_id)
         REFERENCES public.incident (id) MATCH SIMPLE
         ON UPDATE NO ACTION

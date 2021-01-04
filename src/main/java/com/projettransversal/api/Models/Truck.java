@@ -1,6 +1,7 @@
 package com.projettransversal.api.Models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Truck", schema = "public")
@@ -24,6 +25,13 @@ public class Truck {
 
     @Column(name = "matricule")
     private int matricule;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "incident_truck",
+            joinColumns = @JoinColumn(name = "truck_id"),
+            inverseJoinColumns = @JoinColumn(name = "incident_id"))
+    private List<Incident> incidents;
 
     public Truck() {
     }
@@ -73,5 +81,13 @@ public class Truck {
 
     public void setMatricule(int matricule) {
         this.matricule = matricule;
+    }
+
+    public List<Incident> getIncidents() {
+        return incidents;
+    }
+
+    public void setIncidents(List<Incident> incidents) {
+        this.incidents = incidents;
     }
 }
