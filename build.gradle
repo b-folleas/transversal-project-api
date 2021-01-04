@@ -10,6 +10,7 @@ flyway {
     user = flyway.user
     password = flyway.password
     table = flyway.table
+    schemas = flyway.schemas
 }
 
 group = 'com.projettransversal'
