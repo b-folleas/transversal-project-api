@@ -34,9 +34,6 @@ public class IncidentController {
 
     @RequestMapping(value="/incident", method= RequestMethod.POST)
     public Incident getIncidentById(@RequestBody IncidentViewModel incidentVM) {
-        Incident incident = incidentVM.toModel(_mapItemService);
-        _incidentService.insertOrUpdate(incident);
-        _writeUartService.write(getIncidents());
-        return incident;
+        return _incidentService.create(incidentVM);
     }
 }
