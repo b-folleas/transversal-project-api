@@ -37,9 +37,9 @@ public class Seeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         DataTest data = new DataTest(_mapItemRepository);
-        loadIncidents(data.incidents);
-        loadBarracks(data.barracks);
-        loadTrucks(data.trucks);
+        // loadIncidents(data.incidents);
+        // loadBarracks(data.barracks);
+        // loadTrucks(data.trucks);
     }
 
     private void loadIncidents(List<Incident> data) {
