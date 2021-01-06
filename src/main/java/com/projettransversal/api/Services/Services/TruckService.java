@@ -1,12 +1,15 @@
 package com.projettransversal.api.Services.Services;
 
 import com.projettransversal.api.Exception.IncidentNotFoundException;
+import com.projettransversal.api.Exception.MapItemNotFoundException;
 import com.projettransversal.api.Exception.TruckNotFoundException;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.Truck;
+import com.projettransversal.api.Models.ViewModels.TruckViewModel;
 import com.projettransversal.api.ProjetTransversalExceptionEnum;
 import com.projettransversal.api.Repositories.TruckRepository;
 import com.projettransversal.api.Services.IServices.IIncidentService;
+import com.projettransversal.api.Services.IServices.IMapItemService;
 import com.projettransversal.api.Services.IServices.ITruckService;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,12 @@ import org.springframework.stereotype.Service;
 public class TruckService extends CrudService<Truck> implements ITruckService {
 
     private final IIncidentService incidentService;
+    private final IMapItemService mapItemService;
 
-    public TruckService(TruckRepository truckRepository, IIncidentService incidentService) {
+    public TruckService(TruckRepository truckRepository, IIncidentService incidentService, IMapItemService mapItemService) {
         super(truckRepository);
         this.incidentService = incidentService;
+        this.mapItemService = mapItemService;
     }
 
     public Truck linkIncidentToTruck(int truck_id, int incident_id) throws TruckNotFoundException, IncidentNotFoundException {
@@ -26,6 +31,11 @@ public class TruckService extends CrudService<Truck> implements ITruckService {
 
         truck.getIncidents().add(incident);
         truck.setAvailability(false);
+        return this.insertOrUpdate(truck);
+    }
+
+    public Truck create(TruckViewModel truckVM) throws MapItemNotFoundException {
+        Truck truck = truckVM.toModel(this.mapItemService).orElseThrow(() -> new MapItemNotFoundException(ProjetTransversalExceptionEnum.MAPITEM_NOT_FOUND, truckVM.getPosX(), truckVM.getPosY()));
         return this.insertOrUpdate(truck);
     }
 }
