@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projettransversal.api.DTO.DataRequestDTO;
 import com.projettransversal.api.MQTT.MQTTService;
+import com.projettransversal.api.MQTT.ViewModels.IncidentViewModel;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
 import com.projettransversal.api.Models.MapItem;
@@ -46,7 +47,19 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         this.insertOrUpdateMultiple(incidentsToAdd);
         this.logger.info(incidentsToAdd.size() + " incidents inserted");
 
-        _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAdd));
+        List<IncidentViewModel> incidentsToAddViewModel = new ArrayList<IncidentViewModel>();
+        for (Incident incident : incidentsToAdd) {
+            IncidentViewModel incidentVM = new IncidentViewModel();
+            incidentVM.setIntensity(incident.getIntensity());
+            incidentVM.setPosX(incident.getMapItem().getPosX());
+            incidentVM.setPoxY(incident.getMapItem().getPosY());
+            incidentVM.setGround(incident.getMapItem().getGround());
+            incidentVM.setIncidentType(incident.getIncidentType());
+
+            incidentsToAddViewModel.add(incidentVM);
+        }
+
+        _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
         logger.info(incidentsToAdd.size() + " incidents send by MQTT");
     }
 
