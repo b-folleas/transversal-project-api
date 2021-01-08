@@ -4,11 +4,21 @@ import com.projettransversal.api.Models.Ground;
 import com.projettransversal.api.Models.IncidentType;
 
 public class IncidentViewModel {
-    public float intensity;
-    public int posX;
-    public int poxY;
-    public int ground;
-    public int incidentType;
+
+    private int id;
+    private int ground;
+    private int posX;
+    private int poxY;
+    private int incidentType;
+    private float intensity;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
 
     public float getIntensity() {
         return intensity;
