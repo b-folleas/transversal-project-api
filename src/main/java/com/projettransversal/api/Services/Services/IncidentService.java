@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
@@ -42,8 +43,14 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
     public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
         String data = dataRequestDTO.getData();
         List<Incident> incidents = this.mapMessageToIncidents(data);
-        List<Incident> incidentsToAdd = this.keepNewIncidents(incidents);
+        List<Incident> newIncidents = this.keepNewIncidents(incidents);
 
+        List<Incident> incidentsToDelete = newIncidents.stream().filter(i -> i.getIntensity() == 0)
+                .collect(Collectors.toList());
+        this.deleteMultiple(incidentsToDelete);
+
+        List<Incident> incidentsToAdd = newIncidents.stream().filter(i -> i.getIntensity() != 0)
+                .collect(Collectors.toList());
         this.insertOrUpdateMultiple(incidentsToAdd);
         this.logger.info(incidentsToAdd.size() + " incidents inserted");
 
@@ -60,7 +67,7 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         }
 
         _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
-        logger.info(incidentsToAdd.size() + " incidents send by MQTT");
+        logger.info(newIncidents.size() + " incidents send by MQTT");
     }
 
     private List<Incident> mapMessageToIncidents(String data) {
