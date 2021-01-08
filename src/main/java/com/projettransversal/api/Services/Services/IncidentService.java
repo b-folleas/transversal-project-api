@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
 
     private final Logger logger = LoggerFactory.getLogger(IncidentService.class);
-
-
     private final IncidentRepository _incidentRepository;
     private final MapItemService _mapItemService;
     private final MQTTService _mqttService;
@@ -35,27 +33,45 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         _mqttService = mqttService;
     }
 
-    public List<Incident> findByData(Incident incident) {
-        return List.copyOf(_incidentRepository
-            .findByData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId()));
+    public Incident findByCompleteData(Incident incident) {
+        List<Incident> incidents = List.copyOf(_incidentRepository
+            .findByCompleteData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId())
+        );
+        if (incidents.size() != 0) {
+            return incidents.get(0);
+        }
+        return null;
+    }
+
+    public Incident findByData(IncidentType type, MapItem mapItem) {
+        List<Incident> incidents =  List.copyOf(_incidentRepository
+            .findByData(type.toString(), mapItem.getId())
+        );
+        if (incidents.size() != 0) {
+            return incidents.get(0);
+        }
+        return null;
     }
 
     public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
         String data = dataRequestDTO.getData();
         List<Incident> incidents = this.mapMessageToIncidents(data);
-        List<Incident> newIncidents = this.keepNewIncidents(incidents);
+        List<Incident> newIncidents = this.keepNewOrUpdatedIncidents(incidents);
 
-        List<Incident> incidentsToDelete = newIncidents.stream().filter(i -> i.getIntensity() == 0)
+        List<Incident> incidentsToDelete = newIncidents
+                .stream().filter(i -> i.getIntensity() == 0)
                 .collect(Collectors.toList());
         this.deleteMultiple(incidentsToDelete);
 
-        List<Incident> incidentsToAdd = newIncidents.stream().filter(i -> i.getIntensity() != 0)
+        List<Incident> incidentsToAddOrToUpdate = newIncidents
+                .stream().filter(i -> i.getIntensity() != 0)
                 .collect(Collectors.toList());
-        this.insertOrUpdateMultiple(incidentsToAdd);
-        this.logger.info(incidentsToAdd.size() + " incidents inserted");
+        this.insertOrUpdateMultiple(incidentsToAddOrToUpdate);
+
+        this.logger.info(incidentsToAddOrToUpdate.size() + " incidents inserted");
 
         List<IncidentViewModel> incidentsToAddViewModel = new ArrayList<IncidentViewModel>();
-        for (Incident incident : incidentsToAdd) {
+        for (Incident incident : incidentsToAddOrToUpdate) {
             IncidentViewModel incidentVM = new IncidentViewModel();
             incidentVM.setIntensity(incident.getIntensity());
             incidentVM.setPosX(incident.getMapItem().getPosX());
@@ -67,7 +83,22 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         }
 
         _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
-        logger.info(newIncidents.size() + " incidents send by MQTT");
+        logger.info(incidentsToAddOrToUpdate.size() + " incidents send by MQTT");
+    }
+
+    private List<Incident> keepNewOrUpdatedIncidents(List<Incident> incidents) {
+        List<Incident> incidentsToAdd = new ArrayList<Incident>();
+
+        for (Incident incident : incidents) {
+            Incident similarIncident = this.findByCompleteData(incident);
+            if (similarIncident == null) {
+                incidentsToAdd.add(incident);
+            } else {
+                logger.info("Incident already present ! Not inserted");
+            }
+        }
+
+        return incidentsToAdd;
     }
 
     private List<Incident> mapMessageToIncidents(String data) {
@@ -91,21 +122,6 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         return incidents;
     }
 
-    private List<Incident> keepNewIncidents(List<Incident> incidents) {
-        List<Incident> incidentsToAdd = new ArrayList<Incident>();
-
-        for (Incident incident : incidents) {
-            List<Incident> similarIncidents = this.findByData(incident);
-            if (similarIncidents.size() == 0) {
-                incidentsToAdd.add(incident);
-            } else {
-                logger.info("Incident already present ! Not inserted");
-            }
-        }
-
-        return incidentsToAdd;
-    }
-
     private Incident buildIncident(String type, List<Integer> positions){
         MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
         if (mapItem == null) {
@@ -113,24 +129,30 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
             return null;
         }
 
-        Incident incident = new Incident();
-        incident.setMapItem(mapItem);
-        incident.setIntensity(positions.get(2));
-
+        IncidentType incidentType = IncidentType.FIRE;
         switch(type) {
             case "F":
-                incident.setIncidentType(IncidentType.FIRE);
+                incidentType = IncidentType.FIRE;
                 break;
             case "I":
-                incident.setIncidentType(IncidentType.FLOOD);
+                incidentType = IncidentType.FLOOD;
                 break;
             case "A":
-                incident.setIncidentType(IncidentType.ACCIDENT);
+                incidentType = IncidentType.ACCIDENT;
                 break;
             case "T":
-                incident.setIncidentType(IncidentType.TORNADO);
+                incidentType = IncidentType.TORNADO;
                 break;
         }
+
+        Incident incident = this.findByData(incidentType, mapItem);
+        if (incident == null) {
+            incident = new Incident();
+        }
+
+        incident.setMapItem(mapItem);
+        incident.setIntensity(positions.get(2));
+        incident.setIncidentType(incidentType);
 
         return incident;
     }
