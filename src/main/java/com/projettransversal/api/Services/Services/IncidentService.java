@@ -48,8 +48,19 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
 
     public Incident create(IncidentViewModel incidentVM) {
         Incident incident = incidentVM.toModel(this._mapItemService);
-        incident = this.insertOrUpdate(incident);
-        this.sendToMicrobit(this.findAll());
+        if (incident.getIntensity() != 0) {
+            incident = this.insertOrUpdate(incident);
+        }
+
+        List<Incident> incidentsToSend = this.findAll();
+
+        if (incident.getIntensity() == 0) {
+            this.delete(incident);
+            incidentsToSend.add(incident);
+        }
+
+        this.sendToMicrobit(incidentsToSend);
+
         return incident;
     }
 
