@@ -4,6 +4,7 @@ import com.projettransversal.api.Exception.IncidentNotFoundException;
 import com.projettransversal.api.Exception.MapItemNotFoundException;
 import com.projettransversal.api.Exception.TruckNotFoundException;
 import com.projettransversal.api.Models.Incident;
+import com.projettransversal.api.Models.MapItem;
 import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Models.ViewModels.TruckViewModel;
 import com.projettransversal.api.ProjetTransversalExceptionEnum;
@@ -31,6 +32,13 @@ public class TruckService extends CrudService<Truck> implements ITruckService {
 
         truck.getIncidents().add(incident);
         truck.setAvailability(false);
+        return this.insertOrUpdate(truck);
+    }
+
+    public Truck moveTruck(int truck_id, int posX, int posY ) throws  TruckNotFoundException {
+        MapItem mapItem = mapItemService.findByCoordinates(posX, posY);
+        Truck truck = this.findById(truck_id).orElseThrow(() -> new TruckNotFoundException(ProjetTransversalExceptionEnum.TRUCK_NOT_FOUND, truck_id));
+        truck.setMapItem(mapItem);
         return this.insertOrUpdate(truck);
     }
 

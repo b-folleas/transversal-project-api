@@ -36,6 +36,11 @@ public class TruckController {
         return ResponseEntity.ok().body(_truckService.linkIncidentToTruck(truck_id, incident_id));
     }
 
+    @RequestMapping(value = "/truck/{truck_id}/posx/{posx}/posy/{posy}", method = RequestMethod.POST)
+    public Truck moveTruck(@PathVariable int truck_id, @PathVariable int posx,@PathVariable int posy) throws MapItemNotFoundException, TruckNotFoundException {
+        return this._truckService.moveTruck(truck_id,posx,posy);
+    }
+
     @RequestMapping(value = "/truck", method = RequestMethod.POST)
     public Truck createTruck(@RequestBody TruckViewModel truckVM) throws MapItemNotFoundException {
         return this._truckService.create(truckVM);
