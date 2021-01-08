@@ -71,9 +71,11 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         this.logger.info(incidentsToAddOrToUpdate.size() + " incidents inserted");
 
         List<IncidentViewModel> incidentsToAddViewModel = new ArrayList<IncidentViewModel>();
-        for (Incident incident : incidentsToAddOrToUpdate) {
+        for (Incident incident : incidents) {
             IncidentViewModel incidentVM = new IncidentViewModel();
+            incidentVM.setId(incident.getId());
             incidentVM.setIntensity(incident.getIntensity());
+            incidentVM.setIntensityTag(incident.getIntensity());
             incidentVM.setPosX(incident.getMapItem().getPosX());
             incidentVM.setPoxY(incident.getMapItem().getPosY());
             incidentVM.setGround(incident.getMapItem().getGround());
@@ -83,7 +85,7 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         }
 
         _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
-        logger.info(incidentsToAddOrToUpdate.size() + " incidents send by MQTT");
+        logger.info(incidents.size() + " incidents send by MQTT");
     }
 
     private List<Incident> keepNewOrUpdatedIncidents(List<Incident> incidents) {

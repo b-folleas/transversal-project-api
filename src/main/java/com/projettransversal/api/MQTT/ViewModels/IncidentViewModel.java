@@ -11,6 +11,7 @@ public class IncidentViewModel {
     private int poxY;
     private int incidentType;
     private float intensity;
+    private float intensityTag;
 
     public int getId() {
         return id;
@@ -26,6 +27,14 @@ public class IncidentViewModel {
 
     public void setIntensity(float intensity) {
         this.intensity = intensity;
+    }
+
+    public float getIntensityTag() {
+        return intensityTag;
+    }
+
+    public void setIntensityTag(float intensityTag) {
+        this.intensityTag = intensityTag;
     }
 
     public int getPosX() {
