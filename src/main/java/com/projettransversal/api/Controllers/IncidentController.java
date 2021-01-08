@@ -1,6 +1,7 @@
 package com.projettransversal.api.Controllers;
 
 import com.projettransversal.api.Models.Incident;
+import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Models.ViewModels.IncidentViewModel;
 import com.projettransversal.api.Services.IServices.IIncidentService;
 import com.projettransversal.api.Services.IServices.IMapItemService;
@@ -39,4 +40,10 @@ public class IncidentController {
         _writeUartService.write(getIncidents());
         return incident;
     }
+
+    @RequestMapping(value = "/incident/{incident_id}/intensity/{new_intensity}", method = RequestMethod.POST)
+    public Incident updateIncident(@PathVariable int incident_id,@PathVariable int new_intensity )  {
+        return this._incidentService.updateIncidentIntensity(incident_id, new_intensity );
+    }
+
 }
