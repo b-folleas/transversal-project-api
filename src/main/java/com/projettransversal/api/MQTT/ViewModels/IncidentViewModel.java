@@ -45,11 +45,11 @@ public class IncidentViewModel {
         this.posX = posX;
     }
 
-    public int getPoxY() {
+    public int getPosY() {
         return poxY;
     }
 
-    public void setPoxY(int poxY) {
+    public void setPosY(int poxY) {
         this.poxY = poxY;
     }
 
