@@ -8,4 +8,6 @@ public interface ICrudService<T> {
     Optional<T> findById(int id);
     T insertOrUpdate(T obj);
     void delete(T obj);
+    void deleteMultiple(List<T> obj);
+    void insertOrUpdateMultiple(List<T> obj);
 }
