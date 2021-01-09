@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class CrudService<T> implements ICrudService<T> {
-    private final CrudRepository<T, Integer> _repository;
+    protected final CrudRepository<T, Long> _repository;
 
-    public CrudService(CrudRepository<T, Integer> repository) {
+    public CrudService(CrudRepository<T, Long> repository) {
         _repository = repository;
     }
 
@@ -17,7 +17,7 @@ public abstract class CrudService<T> implements ICrudService<T> {
         return (List<T>) _repository.findAll();
     }
 
-    public Optional<T> findById(int id) {
+    public Optional<T> findById(Long id) {
         return _repository.findById(id);
     }
 

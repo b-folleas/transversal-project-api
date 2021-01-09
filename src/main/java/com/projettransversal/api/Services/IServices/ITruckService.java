@@ -8,10 +8,10 @@ import com.projettransversal.api.Models.ViewModels.TruckViewModel;
 
 public interface ITruckService extends ICrudService<Truck> {
 
-    Truck linkIncidentToTruck(int truck_id, int incident_id) throws TruckNotFoundException, IncidentNotFoundException;
+    Truck linkIncidentToTruck(Long truck_id, Long incident_id) throws TruckNotFoundException, IncidentNotFoundException;
 
     Truck create(TruckViewModel truckVM) throws MapItemNotFoundException;
 
-    Truck moveTruck(int truck_id, int posX, int posY ) throws TruckNotFoundException ;
+    Truck moveTruck(Long truck_id, int posX, int posY) throws TruckNotFoundException;
 
-    }
+}

@@ -1,6 +1,8 @@
 package com.projettransversal.api.Models;
 
-public enum Ground {
+import java.io.Serializable;
+
+public enum Ground implements Serializable {
     ROAD("ROAD"),
     GARDEN("ROAD"),
     BUILDING("BUILDING"),

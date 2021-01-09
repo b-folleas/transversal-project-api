@@ -10,7 +10,7 @@ public class Truck {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @OneToOne()
     @JoinColumn(name = "map_item_id", referencedColumnName = "id")
@@ -43,11 +43,11 @@ public class Truck {
         this.matricule = matricule;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

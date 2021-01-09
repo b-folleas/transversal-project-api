@@ -24,7 +24,7 @@ public class BarrackController {
     }
 
     @RequestMapping(value = "/barrack/{id}", method = RequestMethod.GET)
-    public Optional<Barrack> getBarrackById(@PathVariable int id) {
+    public Optional<Barrack> getBarrackById(@PathVariable Long id) {
         return _barrackService.findById(id);
     }
 

@@ -19,13 +19,13 @@ public class MapItemController {
         _truckService = truckService;
     }
 
-    @RequestMapping(value="/mapItems", method= RequestMethod.GET)
+    @RequestMapping(value = "/mapItems", method = RequestMethod.GET)
     public List<MapItem> getMapItems() {
         return _truckService.findAll();
     }
 
-    @RequestMapping(value="/mapItem/{id}", method= RequestMethod.GET)
-    public Optional<MapItem> getMapItemById(@PathVariable int id) {
+    @RequestMapping(value = "/mapItem/{id}", method = RequestMethod.GET)
+    public Optional<MapItem> getMapItemById(@PathVariable Long id) {
         return _truckService.findById(id);
     }
 

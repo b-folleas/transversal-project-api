@@ -13,27 +13,13 @@ import org.springframework.stereotype.Service;
 public class MQTTBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(MQTTBuilder.class);
-
-    @Value("${mqtt.client.id}")
-    private String clientId;
-
-    @Value("${mqtt.broker.connexion-string}")
-    private String brockerAddress;
-
     private static String clientIdStatic;
     private static String brockerAddressStatic;
-
-    @Value("${mqtt.client.id}")
-    public void setClientIdStatic(String id){
-        MQTTBuilder.clientIdStatic = id;
-    }
-
-    @Value("${mqtt.broker.connexion-string}")
-    public void setBrockerAddressStatic(String address){
-        MQTTBuilder.brockerAddressStatic = address;
-    }
-
     private static IMqttClient instance;
+    @Value("${mqtt.client.id}")
+    private String clientId;
+    @Value("${mqtt.broker.connexion-string}")
+    private String brockerAddress;
 
     private MQTTBuilder() {
     }
@@ -57,5 +43,15 @@ public class MQTTBuilder {
         }
 
         return instance;
+    }
+
+    @Value("${mqtt.client.id}")
+    public void setClientIdStatic(String id) {
+        MQTTBuilder.clientIdStatic = id;
+    }
+
+    @Value("${mqtt.broker.connexion-string}")
+    public void setBrockerAddressStatic(String address) {
+        MQTTBuilder.brockerAddressStatic = address;
     }
 }

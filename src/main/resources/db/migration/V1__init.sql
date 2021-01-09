@@ -5,19 +5,19 @@ CREATE SEQUENCE IF NOT EXISTS hibernate_sequence;
 DROP TABLE IF EXISTS map_item;
 CREATE TABLE public.map_item
 (
-    id integer NOT NULL,
+    id     bigint NOT NULL,
     ground character varying(255),
-    posx integer,
-    posy integer,
+    posx   integer,
+    posy   integer,
     CONSTRAINT pk_map_item PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS incident;
 CREATE TABLE public.incident
 (
-    id integer NOT NULL,
-    intensity real,
-    map_item_id integer,
+    id            bigint NOT NULL,
+    intensity     real,
+    map_item_id   bigint,
     incident_type character varying(255),
     CONSTRAINT pk_incident PRIMARY KEY (id),
     CONSTRAINT fk_map_item_id FOREIGN KEY (map_item_id)
@@ -29,9 +29,9 @@ CREATE TABLE public.incident
 DROP TABLE IF EXISTS barrack;
 CREATE TABLE public.barrack
 (
-    id integer NOT NULL,
-    name character varying(255),
-    map_item_id integer,
+    id          bigint NOT NULL,
+    name        character varying(255),
+    map_item_id bigint,
     CONSTRAINT pk_barrack PRIMARY KEY (id),
     CONSTRAINT fk_map_item_id FOREIGN KEY (map_item_id)
         REFERENCES public.map_item (id) MATCH SIMPLE
@@ -42,11 +42,11 @@ CREATE TABLE public.barrack
 DROP TABLE IF EXISTS truck;
 CREATE TABLE public.truck
 (
-    id integer NOT NULL,
-    matricule integer NOT NULL,
+    id           bigint  NOT NULL,
+    matricule    integer NOT NULL,
     availability boolean DEFAULT true,
-    map_item_id integer,
-    barrack_id integer,
+    map_item_id  bigint,
+    barrack_id   bigint,
     CONSTRAINT pk_truck PRIMARY KEY (id),
     CONSTRAINT fk_map_item_id FOREIGN KEY (map_item_id)
         REFERENCES public.map_item (id) MATCH SIMPLE
@@ -61,8 +61,8 @@ CREATE TABLE public.truck
 DROP TABLE IF EXISTS incident_truck;
 CREATE TABLE public.incident_truck
 (
-    incident_id integer NOT NULL,
-    truck_id    integer NOT NULL,
+    incident_id bigint NOT NULL,
+    truck_id    bigint NOT NULL,
     CONSTRAINT pk_incident_truck PRIMARY KEY (incident_id, truck_id),
     CONSTRAINT fk_incident_id FOREIGN KEY (incident_id)
         REFERENCES public.incident (id) MATCH SIMPLE

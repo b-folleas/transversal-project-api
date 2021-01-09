@@ -26,7 +26,7 @@ public class TruckService extends CrudService<Truck> implements ITruckService {
         this.mapItemService = mapItemService;
     }
 
-    public Truck linkIncidentToTruck(int truck_id, int incident_id) throws TruckNotFoundException, IncidentNotFoundException {
+    public Truck linkIncidentToTruck(Long truck_id, Long incident_id) throws TruckNotFoundException, IncidentNotFoundException {
         Truck truck = this.findById(truck_id).orElseThrow(() -> new TruckNotFoundException(ProjetTransversalExceptionEnum.TRUCK_NOT_FOUND, truck_id));
         Incident incident = this.incidentService.findById(incident_id).orElseThrow(() -> new IncidentNotFoundException(ProjetTransversalExceptionEnum.INCIDENT_NOT_FOUND, incident_id));
 
@@ -35,7 +35,7 @@ public class TruckService extends CrudService<Truck> implements ITruckService {
         return this.insertOrUpdate(truck);
     }
 
-    public Truck moveTruck(int truck_id, int posX, int posY ) throws  TruckNotFoundException {
+    public Truck moveTruck(Long truck_id, int posX, int posY) throws TruckNotFoundException {
         MapItem mapItem = mapItemService.findByCoordinates(posX, posY);
         Truck truck = this.findById(truck_id).orElseThrow(() -> new TruckNotFoundException(ProjetTransversalExceptionEnum.TRUCK_NOT_FOUND, truck_id));
         truck.setMapItem(mapItem);

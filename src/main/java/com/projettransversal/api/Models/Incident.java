@@ -10,7 +10,7 @@ public class Incident {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @OneToOne()
     @JoinColumn(name = "map_item_id", referencedColumnName = "id")
@@ -29,6 +29,12 @@ public class Incident {
         this.incidentType = incidentType;
     }
 
+    public Incident(MapItem mapItem, IncidentType incidentType) {
+        this.id = null;
+        this.mapItem = mapItem;
+        this.incidentType = incidentType;
+    }
+
     public Incident() {
     }
 
@@ -40,11 +46,11 @@ public class Incident {
         this.incidentType = incidentType;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -27,18 +27,18 @@ public class TruckController {
     }
 
     @GetMapping(value = "/truck/{id}")
-    public Optional<Truck> getTruckById(@PathVariable int id) {
+    public Optional<Truck> getTruckById(@PathVariable Long id) {
         return _truckService.findById(id);
     }
 
     @GetMapping(value = "/truck/{truck_id}/link/incident/{incident_id}")
-    public ResponseEntity<Truck> linkIncidentToTruck(@PathVariable int truck_id, @PathVariable int incident_id) throws TruckNotFoundException, IncidentNotFoundException {
+    public ResponseEntity<Truck> linkIncidentToTruck(@PathVariable Long truck_id, @PathVariable Long incident_id) throws TruckNotFoundException, IncidentNotFoundException {
         return ResponseEntity.ok().body(_truckService.linkIncidentToTruck(truck_id, incident_id));
     }
 
     @RequestMapping(value = "/truck/{truck_id}/posx/{posx}/posy/{posy}", method = RequestMethod.POST)
-    public Truck moveTruck(@PathVariable int truck_id, @PathVariable int posx,@PathVariable int posy) throws MapItemNotFoundException, TruckNotFoundException {
-        return this._truckService.moveTruck(truck_id,posx,posy);
+    public Truck moveTruck(@PathVariable Long truck_id, @PathVariable int posx, @PathVariable int posy) throws MapItemNotFoundException, TruckNotFoundException {
+        return this._truckService.moveTruck(truck_id, posx, posy);
     }
 
     @RequestMapping(value = "/truck", method = RequestMethod.POST)

@@ -7,68 +7,102 @@ import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.MQTT.ViewModels.IncidentViewModel;
 import com.projettransversal.api.Models.Incident;
 import com.projettransversal.api.Models.IncidentType;
-import com.projettransversal.api.Models.MapItem;
+import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Repositories.IncidentRepository;
+import com.projettransversal.api.Repositories.TruckRepository;
 import com.projettransversal.api.Services.IServices.IIncidentService;
+import com.projettransversal.api.Services.IServices.IMapItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
 
     private final Logger logger = LoggerFactory.getLogger(IncidentService.class);
     private final IncidentRepository _incidentRepository;
-    private final MapItemService _mapItemService;
+    private final IMapItemService _mapItemService;
     private final MQTTService _mqttService;
+    private final TruckRepository truckRepository;
 
-    public IncidentService(IncidentRepository incidentRepository, MapItemService mapItemService, MQTTService mqttService) {
+    public IncidentService(IncidentRepository incidentRepository, IMapItemService mapItemService, MQTTService mqttService, TruckRepository truckRepository) {
         super(incidentRepository);
         _incidentRepository = incidentRepository;
         _mapItemService = mapItemService;
         _mqttService = mqttService;
+        this.truckRepository = truckRepository;
     }
 
-    public Incident findByCompleteData(Incident incident) {
-        List<Incident> incidents = List.copyOf(_incidentRepository
-            .findByCompleteData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId())
-        );
-        if (incidents.size() != 0) {
-            return incidents.get(0);
+    private List<Incident> getIncidentsFromDataRequest(DataRequestDTO dataRequestDTO) {
+        // Création d'une liste d'incident vide.
+        List<Incident> incidents = new ArrayList<Incident>();
+
+        // Split en plusieurs string en fonction des différents type d'incidents.
+        String[] incidentsTypes = dataRequestDTO.getData().split("&");
+
+        // Pour chaque type d'incident on récupère les incidents existants, ou on les créé.
+        for (String incidentsType : incidentsTypes) {
+            String[] incidentsList = incidentsType.split("/");
+
+            for (int i = 1; i < incidentsList.length; i++) {
+                // Va récupérer en base de donnée l'incident correspondant, ou bien en créer un nouveau.
+                incidents.add(buildIncident(incidentsList[0], incidentsList[i]));
+            }
         }
-        return null;
+
+        return incidents;
     }
 
-    public Incident findByData(IncidentType type, MapItem mapItem) {
-        List<Incident> incidents =  List.copyOf(_incidentRepository
-            .findByData(type.toString(), mapItem.getId())
-        );
-        if (incidents.size() != 0) {
-            return incidents.get(0);
-        }
-        return null;
+    private Incident buildIncident(String type, String stringIncident) {
+
+        String[] stringIncidentSplited = stringIncident.split(",");
+
+        int posX = Integer.parseInt(stringIncidentSplited[0]);
+        int posY = Integer.parseInt(stringIncidentSplited[1]);
+        float intensity = Float.parseFloat(stringIncidentSplited[2]);
+
+        IncidentType incidentType = IncidentType.fromString(type);
+
+        // Récupération de l'incident en base.
+        // Si jamais il n'existe pas alors il est créé avec le bon mapItem et incidentType.
+
+        Incident incident = this._incidentRepository.findFromString(incidentType, posX, posY).orElse(new Incident(this._mapItemService.findByCoordinates(posX, posY), incidentType));
+
+        incident.setIntensity(intensity);
+        return incident;
     }
 
     public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
-        String data = dataRequestDTO.getData();
-        List<Incident> incidents = this.mapMessageToIncidents(data);
-        List<Incident> newIncidents = this.keepNewOrUpdatedIncidents(incidents);
 
-        List<Incident> incidentsToDelete = newIncidents
-                .stream().filter(i -> i.getIntensity() == 0)
-                .collect(Collectors.toList());
-        this.deleteMultiple(incidentsToDelete);
+        List<Incident> incidents = this.getIncidentsFromDataRequest(dataRequestDTO);
+        logger.info(String.format("Récupération de %d élément(s).", incidents.size()));
 
-        List<Incident> incidentsToAddOrToUpdate = newIncidents
-                .stream().filter(i -> i.getIntensity() != 0)
-                .collect(Collectors.toList());
-        this.insertOrUpdateMultiple(incidentsToAddOrToUpdate);
+        for (Incident incident : incidents) {
+            // Si jamais l'intensité est à 0 il faut supprimer de la base de donnée l'intensité.
+            if (incident.getIntensity() == 0) {
 
-        this.logger.info(incidentsToAddOrToUpdate.size() + " incidents inserted");
+                // Il faut d'abord supprimer enlever l'association des trucks à l'incident et ensuite le supprimer.
+                List<Truck> trucks = this.truckRepository.findAllByIncident(incident);
+
+                for (Truck truck : trucks) {
+                    truck.getIncidents().remove(incident);
+                    truck.setAvailability(truck.getIncidents().size() == 0);
+                    this.truckRepository.save(truck);
+                }
+
+                this.delete(incident);
+            } else {
+                Incident newIncident = this.insertOrUpdate(incident);
+
+                // On bind le nouvel ID de l'incident sur l'objet pour qu'il soit accessible par le MQTT.
+                if (incident.getId() == null) {
+                    incident.setId(newIncident.getId());
+                }
+            }
+        }
 
         List<IncidentViewModel> incidentsToAddViewModel = new ArrayList<IncidentViewModel>();
         for (Incident incident : incidents) {
@@ -86,76 +120,5 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
 
         _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
         logger.info(incidents.size() + " incidents send by MQTT");
-    }
-
-    private List<Incident> keepNewOrUpdatedIncidents(List<Incident> incidents) {
-        List<Incident> incidentsToAdd = new ArrayList<Incident>();
-
-        for (Incident incident : incidents) {
-            Incident similarIncident = this.findByCompleteData(incident);
-            if (similarIncident == null) {
-                incidentsToAdd.add(incident);
-            } else {
-                logger.info("Incident already present ! Not inserted");
-            }
-        }
-
-        return incidentsToAdd;
-    }
-
-    private List<Incident> mapMessageToIncidents(String data) {
-        List<Incident> incidents = new ArrayList<Incident>();
-
-        String[] incidentsTypes = data.toString().split("&");
-        for (String incidentsType : incidentsTypes) {
-            String[] incidentsList = incidentsType.split("/");
-
-            for (int i = 1; i < incidentsList.length ; i++ ) {
-                List<Integer> positionsList = new ArrayList<Integer>();
-
-                for (String position : incidentsList[i].split(",")) {
-                    positionsList.add(Integer.parseInt(position));
-                }
-
-                incidents.add(buildIncident(incidentsList[0], positionsList));
-            }
-        }
-
-        return incidents;
-    }
-
-    private Incident buildIncident(String type, List<Integer> positions){
-        MapItem mapItem = _mapItemService.findByCoordinates(positions.get(0), positions.get(1));
-        if (mapItem == null) {
-            logger.info("No mapItem found for these coordinates. Return");
-            return null;
-        }
-
-        IncidentType incidentType = IncidentType.FIRE;
-        switch(type) {
-            case "F":
-                incidentType = IncidentType.FIRE;
-                break;
-            case "I":
-                incidentType = IncidentType.FLOOD;
-                break;
-            case "A":
-                incidentType = IncidentType.ACCIDENT;
-                break;
-            case "T":
-                incidentType = IncidentType.TORNADO;
-                break;
-        }
-
-        Incident incident = this.findByData(incidentType, mapItem);
-        if (incident == null) {
-            incident = new Incident();
-        }
-
-        incident.setMapItem(mapItem);
-        incident.setIntensity(positions.get(2));
-        incident.setIncidentType(incidentType);
-
-        return incident;
     }
 }

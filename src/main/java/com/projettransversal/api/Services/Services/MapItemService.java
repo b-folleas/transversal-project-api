@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MapItemService extends CrudService<MapItem> implements IMapItemService {
 
-    private MapItemRepository _mapItemRepository;
+    private final MapItemRepository _mapItemRepository;
 
     public MapItemService(MapItemRepository mapItemRepository) {
         super(mapItemRepository);
