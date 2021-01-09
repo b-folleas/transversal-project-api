@@ -75,11 +75,11 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         return incident;
     }
 
-    public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
-
+    public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {s
+        logger.info(String.format("Récupération de la chaîne suivante : %s", dataRequestDTO.getData()));
         List<Incident> incidents = this.getIncidentsFromDataRequest(dataRequestDTO);
         logger.info(String.format("Récupération de %d élément(s).", incidents.size()));
-
+        incidents.forEach(i -> logger.info(i.toString()));
         for (Incident incident : incidents) {
             // Si jamais l'intensité est à 0 il faut supprimer de la base de donnée l'intensité.
             if (incident.getIntensity() == 0) {

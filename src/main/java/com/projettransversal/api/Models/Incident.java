@@ -69,4 +69,14 @@ public class Incident {
     public void setMapItem(MapItem mapItem) {
         this.mapItem = mapItem;
     }
+
+    @Override
+    public String toString() {
+        return "Incident{" +
+                "id=" + id +
+                ", mapItem=" + mapItem +
+                ", intensity=" + intensity +
+                ", incidentType=" + incidentType +
+                '}';
+    }
 }

@@ -62,4 +62,14 @@ public class MapItem implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "MapItem{" +
+                "id=" + id +
+                ", posX=" + posX +
+                ", posY=" + posY +
+                ", ground=" + ground +
+                '}';
+    }
 }
