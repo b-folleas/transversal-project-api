@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 @Repository
-public interface IncidentRepository extends CrudRepository<Incident, Integer> {
+public interface IncidentRepository extends CrudRepository<Incident, Long> {
 
     @Query(
             value = "select * from incident where intensity = ?1 and incident_type = ?2 and map_item_id = ?3",
             nativeQuery = true)
-    Collection<Incident> findByData(float intensity, String y, int mapItemId);
+    Collection<Incident> findByData(float intensity, String y, Long mapItemId);
 }

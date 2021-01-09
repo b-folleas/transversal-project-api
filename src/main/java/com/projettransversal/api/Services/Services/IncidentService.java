@@ -24,16 +24,13 @@ import java.util.stream.Collectors;
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
 
     private final Logger logger = LoggerFactory.getLogger(IncidentService.class);
-    private WebClient webClient;
-
-    @Value("${microbit.url}")
-    String microbitUrl;
-
-    @Value("${microbit.path}")
-    String microbitPath;
-
     private final IncidentRepository _incidentRepository;
     private final IMapItemService _mapItemService;
+    @Value("${microbit.url}")
+    String microbitUrl;
+    @Value("${microbit.path}")
+    String microbitPath;
+    private WebClient webClient;
 
     public IncidentService(IncidentRepository incidentRepository, IMapItemService mapItemService) {
         super(incidentRepository);
@@ -46,14 +43,14 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
                 .findByData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId()));
     }
 
-    public Incident updateIncidentIntensity(int incident_id, int new_intensity){
-         Incident incident = _incidentRepository.findById(incident_id).get();
-         incident.setIntensity(new_intensity);
-         return this.insertOrUpdate(incident);
+    public Incident updateIncidentIntensity(Long incident_id, int new_intensity) {
+        Incident incident = _incidentRepository.findById(incident_id).get();
+        incident.setIntensity(new_intensity);
+
+        return this.updateOrDeleteAndSave(incident);
     }
 
-    public Incident create(IncidentViewModel incidentVM) {
-        Incident incident = incidentVM.toModel(this._mapItemService);
+    private Incident updateOrDeleteAndSave(Incident incident) {
         if (incident.getIntensity() != 0) {
             incident = this.insertOrUpdate(incident);
         }
@@ -66,8 +63,12 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         }
 
         this.sendToMicrobit(incidentsToSend);
-
         return incident;
+    }
+
+    public Incident create(IncidentViewModel incidentVM) {
+        Incident incident = incidentVM.toModel(this._mapItemService);
+        return this.updateOrDeleteAndSave(incident);
     }
 
     private void sendToMicrobit(List<Incident> incidents) {
@@ -151,11 +152,11 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
     private void addIncidents(List<Incident> incidents, StringBuilder returnString) {
         for (Incident incident : incidents) {
             returnString.append("/");
-            returnString.append(String.valueOf(incident.getMapItem().getPosX()));
+            returnString.append(incident.getMapItem().getPosX());
             returnString.append(",");
-            returnString.append(String.valueOf(incident.getMapItem().getPosX()));
+            returnString.append(incident.getMapItem().getPosY());
             returnString.append(",");
-            returnString.append(String.valueOf(Math.round(incident.getIntensity())));
+            returnString.append(Math.round(incident.getIntensity()));
         }
     }
 

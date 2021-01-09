@@ -12,11 +12,16 @@ public class IncidentViewModel {
     private final float intensity;
     private final IncidentType incidentType;
 
-    public IncidentViewModel(int id, int posX, int posY, float intensity, IncidentType incidentType) {
+    public IncidentViewModel(Long id, int posX, int posY, float intensity, IncidentType incidentType) {
         this.posX = posX;
         this.posY = posY;
         this.intensity = intensity;
         this.incidentType = incidentType;
+    }
+
+    public static IncidentViewModel fromModel(Incident i) {
+        return new IncidentViewModel(i.getId(), i.getMapItem().getPosX(),
+                i.getMapItem().getPosY(), i.getIntensity(), i.getIncidentType());
     }
 
     public Incident toModel(IMapItemService mapItemService) {
@@ -25,11 +30,6 @@ public class IncidentViewModel {
             return new Incident(mapItem, intensity, incidentType);
         }
         return null;
-    }
-
-    public static IncidentViewModel fromModel(Incident i) {
-        return new IncidentViewModel(i.getId(), i.getMapItem().getPosX(),
-                i.getMapItem().getPosY(), i.getIntensity(), i.getIncidentType());
     }
 }
 

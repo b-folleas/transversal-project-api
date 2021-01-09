@@ -7,8 +7,9 @@ import java.util.List;
 
 public interface IIncidentService extends ICrudService<Incident> {
     List<Incident> findByData(Incident incident);
-    public Incident create(IncidentViewModel incidentVM);
 
-    Incident updateIncidentIntensity(int incident_id, int new_intensity);
+    Incident create(IncidentViewModel incidentVM);
 
-    }
+    Incident updateIncidentIntensity(Long incident_id, int new_intensity);
+
+}
