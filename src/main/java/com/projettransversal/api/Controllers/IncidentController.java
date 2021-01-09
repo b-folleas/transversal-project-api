@@ -5,7 +5,6 @@ import com.projettransversal.api.Models.Truck;
 import com.projettransversal.api.Models.ViewModels.IncidentViewModel;
 import com.projettransversal.api.Services.IServices.IIncidentService;
 import com.projettransversal.api.Services.IServices.IMapItemService;
-import com.projettransversal.api.Uart.WriteUartService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +13,10 @@ import java.util.Optional;
 @RestController
 public class IncidentController {
     private final IIncidentService _incidentService;
-    private final WriteUartService _writeUartService;
     private final IMapItemService _mapItemService;
 
-    public IncidentController(IIncidentService incidentService, WriteUartService writeUartService, IMapItemService mapItemService) {
+    public IncidentController(IIncidentService incidentService, IMapItemService mapItemService) {
         _incidentService = incidentService;
-        _writeUartService = writeUartService;
         _mapItemService = mapItemService;
     }
 
@@ -35,10 +32,7 @@ public class IncidentController {
 
     @RequestMapping(value="/incident", method= RequestMethod.POST)
     public Incident getIncidentById(@RequestBody IncidentViewModel incidentVM) {
-        Incident incident = incidentVM.toModel(_mapItemService);
-        _incidentService.insertOrUpdate(incident);
-        _writeUartService.write(getIncidents());
-        return incident;
+        return _incidentService.create(incidentVM);
     }
 
     @RequestMapping(value = "/incident/{incident_id}/intensity/{new_intensity}", method = RequestMethod.POST)
