@@ -75,7 +75,7 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         return incident;
     }
 
-    public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {s
+    public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
         logger.info(String.format("Récupération de la chaîne suivante : %s", dataRequestDTO.getData()));
         List<Incident> incidents = this.getIncidentsFromDataRequest(dataRequestDTO);
         logger.info(String.format("Récupération de %d élément(s).", incidents.size()));
