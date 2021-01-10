@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +60,15 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
 
         if (incident.getIntensity() == 0) {
             this.delete(incident);
-            incidentsToSend.add(incident);
+            final Long incidentId = incident.getId();
+
+            Optional<Incident> incidentOptional = incidentsToSend.stream().filter(i -> i.getId().equals(incidentId)).findFirst();
+
+            if (incidentOptional.isPresent()) {
+                incidentOptional.get().setIntensity(0);
+            } else {
+                incidentsToSend.add(incident);
+            }
         }
 
         this.sendToMicrobit(incidentsToSend);
