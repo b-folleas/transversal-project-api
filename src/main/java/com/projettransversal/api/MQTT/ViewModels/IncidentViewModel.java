@@ -6,6 +6,7 @@ import com.projettransversal.api.Models.IncidentType;
 public class IncidentViewModel {
 
     private int id;
+    private int idTag;
     private int ground;
     private int posX;
     private int poxY;
@@ -21,6 +22,13 @@ public class IncidentViewModel {
         this.id = id;
     }
 
+    public int getIdTag() {
+        return idTag;
+    }
+
+    public void setIdTag(int idTag){
+        this.idTag = idTag;
+    }
     public float getIntensity() {
         return intensity;
     }

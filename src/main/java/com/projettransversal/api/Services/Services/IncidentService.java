@@ -74,6 +74,7 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         for (Incident incident : incidents) {
             IncidentViewModel incidentVM = new IncidentViewModel();
             incidentVM.setId(incident.getId());
+            incidentVM.setIdTag(incident.getId());
             incidentVM.setIntensity(incident.getIntensity());
             incidentVM.setIntensityTag(incident.getIntensity());
             incidentVM.setPosX(incident.getMapItem().getPosX());
