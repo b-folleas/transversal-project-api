@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class IncidentService extends CrudService<Incident> implements IIncidentService {
@@ -75,25 +76,38 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         return incident;
     }
 
+    private Incident deleteIncident(Incident incident) {
+        // Il faut d'abord supprimer enlever l'association des trucks à l'incident et ensuite le supprimer.
+        List<Truck> trucks = this.truckRepository.findAllByIncident(incident);
+
+        for (Truck truck : trucks) {
+            truck.getIncidents().remove(incident);
+            truck.setAvailability(truck.getIncidents().size() == 0);
+            this.truckRepository.save(truck);
+        }
+
+        this.delete(incident);
+        return incident;
+    }
+
     public void addData(DataRequestDTO dataRequestDTO) throws JsonProcessingException {
         logger.info(String.format("Récupération de la chaîne suivante : %s", dataRequestDTO.getData()));
         List<Incident> incidents = this.getIncidentsFromDataRequest(dataRequestDTO);
         logger.info(String.format("Récupération de %d élément(s).", incidents.size()));
         incidents.forEach(i -> logger.info(i.toString()));
+
+        logger.info("Vérification des données, si jamais des incidents présents en base mais plus dans les datas.");
+        List<Incident> incidentsBase = this.findAll();
+
+        for (Incident incident: incidentsBase.stream().filter(incidentBase -> incidents.stream().noneMatch(incidentData -> incidentBase.getId() != null && incidentData.getId() != null && incidentData.getId().equals(incidentBase.getId()))).collect(Collectors.toList())) {
+            logger.info("Incident non supprimé alors qu'il aurait du : " + incident);
+            this.deleteIncident(incident);
+        }
+
         for (Incident incident : incidents) {
             // Si jamais l'intensité est à 0 il faut supprimer de la base de donnée l'intensité.
             if (incident.getIntensity() == 0) {
-
-                // Il faut d'abord supprimer enlever l'association des trucks à l'incident et ensuite le supprimer.
-                List<Truck> trucks = this.truckRepository.findAllByIncident(incident);
-
-                for (Truck truck : trucks) {
-                    truck.getIncidents().remove(incident);
-                    truck.setAvailability(truck.getIncidents().size() == 0);
-                    this.truckRepository.save(truck);
-                }
-
-                this.delete(incident);
+                this.deleteIncident(incident);
             } else {
                 Incident newIncident = this.insertOrUpdate(incident);
 
