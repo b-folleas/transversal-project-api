@@ -3,6 +3,7 @@ package com.projettransversal.api.Services.Services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projettransversal.api.DTO.DataRequestDTO;
+import com.projettransversal.api.DTO.MQTTIncident;
 import com.projettransversal.api.MQTT.MQTTService;
 import com.projettransversal.api.MQTT.ViewModels.IncidentViewModel;
 import com.projettransversal.api.Models.Incident;
@@ -118,21 +119,22 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
             }
         }
 
-        List<IncidentViewModel> incidentsToAddViewModel = new ArrayList<IncidentViewModel>();
+        List<MQTTIncident> incidentsToAddMQTT = new ArrayList<MQTTIncident>();
         for (Incident incident : incidents) {
-            IncidentViewModel incidentVM = new IncidentViewModel();
-            incidentVM.setId(incident.getId());
-            incidentVM.setIntensity(incident.getIntensity());
-            incidentVM.setIntensityTag(incident.getIntensity());
-            incidentVM.setPosX(incident.getMapItem().getPosX());
-            incidentVM.setPosY(incident.getMapItem().getPosY());
-            incidentVM.setGround(incident.getMapItem().getGround());
-            incidentVM.setIncidentType(incident.getIncidentType());
+            MQTTIncident incidentMQTT = new MQTTIncident();
+            incidentMQTT.setId(incident.getId());
+            incidentMQTT.setIdTag(incident.getId());
+            incidentMQTT.setIntensity(incident.getIntensity());
+            incidentMQTT.setIntensityTag(incident.getIntensity());
+            incidentMQTT.setPosX(incident.getMapItem().getPosX());
+            incidentMQTT.setPosY(incident.getMapItem().getPosY());
+            incidentMQTT.setGround(incident.getMapItem().getGround());
+            incidentMQTT.setIncidentType(incident.getIncidentType());
 
-            incidentsToAddViewModel.add(incidentVM);
+            incidentsToAddMQTT.add(incidentMQTT);
         }
 
-        _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddViewModel));
+        _mqttService.sendToBroker(new ObjectMapper().writeValueAsString(incidentsToAddMQTT));
         logger.info(incidents.size() + " incidents send by MQTT");
     }
 }
