@@ -8,8 +8,8 @@ import java.util.List;
 public interface IIncidentService extends ICrudService<Incident> {
     List<Incident> findByData(Incident incident);
 
-    Incident create(IncidentViewModel incidentVM);
+    Incident create(IncidentViewModel incidentVM) throws InterruptedException;
 
-    Incident updateIncidentIntensity(Long incident_id, int new_intensity);
+    Incident updateIncidentIntensity(Long incident_id, int new_intensity) throws InterruptedException;
 
 }

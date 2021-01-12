@@ -27,12 +27,12 @@ public class IncidentController {
     }
 
     @RequestMapping(value = "/incident", method = RequestMethod.POST)
-    public Incident getIncidentById(@RequestBody IncidentViewModel incidentVM) {
+    public Incident getIncidentById(@RequestBody IncidentViewModel incidentVM) throws InterruptedException {
         return _incidentService.create(incidentVM);
     }
 
     @RequestMapping(value = "/incident/{incident_id}/intensity/{new_intensity}", method = RequestMethod.POST)
-    public Incident updateIncident(@PathVariable Long incident_id, @PathVariable int new_intensity) {
+    public Incident updateIncident(@PathVariable Long incident_id, @PathVariable int new_intensity) throws InterruptedException {
         return this._incidentService.updateIncidentIntensity(incident_id, new_intensity);
     }
 

@@ -44,14 +44,14 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
                 .findByData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId()));
     }
 
-    public Incident updateIncidentIntensity(Long incident_id, int new_intensity) {
+    public Incident updateIncidentIntensity(Long incident_id, int new_intensity) throws InterruptedException {
         Incident incident = _incidentRepository.findById(incident_id).get();
         incident.setIntensity(new_intensity);
 
         return this.updateOrDeleteAndSave(incident);
     }
 
-    private Incident updateOrDeleteAndSave(Incident incident) {
+    private Incident updateOrDeleteAndSave(Incident incident) throws InterruptedException {
         if (incident.getIntensity() != 0) {
             incident = this.insertOrUpdate(incident);
         }
@@ -75,18 +75,19 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         return incident;
     }
 
-    public Incident create(IncidentViewModel incidentVM) {
+    public Incident create(IncidentViewModel incidentVM) throws InterruptedException {
         Incident incident = incidentVM.toModel(this._mapItemService);
         return this.updateOrDeleteAndSave(incident);
     }
 
-    private void sendToMicrobit(List<Incident> incidents) {
+    private void sendToMicrobit(List<Incident> incidents) throws InterruptedException {
         String formattedData = formatData(incidents);
         logger.info(String.format("Envoi de '%s' à l'API", formattedData));
         MicrobitResponseDTO microbitResponseDTO = this.sendData(new MicrobitRequestDTO(formattedData));
         if (!microbitResponseDTO.getCode()) {
             logger.error("Erreur lors de l'envoi au microbit");
         }
+        Thread.sleep(100);
     }
 
     private MicrobitResponseDTO sendData(MicrobitRequestDTO microbitRequest) {
