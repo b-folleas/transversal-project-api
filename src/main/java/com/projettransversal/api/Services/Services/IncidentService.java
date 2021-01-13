@@ -39,13 +39,14 @@ public class IncidentService extends CrudService<Incident> implements IIncidentS
         _mapItemService = mapItemService;
     }
 
-    public List<Incident> findByData(Incident incident) {
-        return List.copyOf(_incidentRepository
-                .findByData(incident.getIntensity(), incident.getIncidentType().toString(), incident.getMapItem().getId()));
-    }
-
     public Incident updateIncidentIntensity(Long incident_id, int new_intensity) {
-        Incident incident = _incidentRepository.findById(incident_id).get();
+        Optional<Incident> incidentOptional = _incidentRepository.findById(incident_id);
+
+        if(incidentOptional.isEmpty()) {
+            return null;
+        }
+
+        Incident incident = incidentOptional.get();
         incident.setIntensity(new_intensity);
 
         return this.updateOrDeleteAndSave(incident);
