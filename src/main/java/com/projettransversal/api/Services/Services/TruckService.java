@@ -30,7 +30,9 @@ public class TruckService extends CrudService<Truck> implements ITruckService {
         Truck truck = this.findById(truck_id).orElseThrow(() -> new TruckNotFoundException(ProjetTransversalExceptionEnum.TRUCK_NOT_FOUND, truck_id));
         Incident incident = this.incidentService.findById(incident_id).orElseThrow(() -> new IncidentNotFoundException(ProjetTransversalExceptionEnum.INCIDENT_NOT_FOUND, incident_id));
 
-        truck.getIncidents().add(incident);
+        if (truck.getIncidents() != null && truck.getIncidents().stream().noneMatch(i -> i.getId().equals(incident.getId()))) {
+            truck.getIncidents().add(incident);
+        }
         truck.setAvailability(false);
         return this.insertOrUpdate(truck);
     }
