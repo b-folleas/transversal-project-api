@@ -30,6 +30,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core'
     implementation 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core:7.3.1'
+    implementation 'io.springfox:springfox-swagger2:2.8.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.8.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
 }
 
