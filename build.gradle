@@ -32,6 +32,8 @@ dependencies {
     implementation 'com.fazecast:jSerialComm:[2.0.0,3.0.0)'
     implementation 'org.flywaydb:flyway-core:7.3.1'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'io.springfox:springfox-swagger-ui:2.8.0'
+    implementation 'io.springfox:springfox-swagger2:2.8.0'
 }
 
 test {
